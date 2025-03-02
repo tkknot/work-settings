@@ -8,22 +8,44 @@ All messages required in Japanese.
 ## command
 - Always add --no-pager when running Git commands
 - Do not push to remote until instructed
+
 ## commit-prefixes:
+# Feature & Functionality
 - feat: "Adding new features or modifying functionality"
+
+# Bug Fixes
 - fix: "Bug fixes or typo corrections"
+
+# Documentation
 - docs: "Adding documentation"
+
+# Code Style
 - style: "Formatting changes, import order adjustments, or adding comments"
+
+# Code Improvement
 - refactor: "Code refactoring without affecting functionality"
+- perf: "Performance improvement changes"
+
+# Testing
 - test: "Adding or modifying tests"
+
+# Infrastructure
 - ci: "Changes related to CI/CD"
 - docker: "Modifications to Dockerfile or container-related changes"
-- chore: "Miscellaneous changes"
-- init: "Project initialization and setup"
 - build: "Changes to build system or external dependencies"
-- perf: "Performance improvement changes"
+
+# Project Management
+- init: "Project initialization and setup"
+- chore: "Miscellaneous changes"
+
+# Version Control
 - revert: "Reverting previous commits"
+
+# Accessibility & Internationalization
 - i18n: "Internationalization changes"
 - a11y: "Accessibility changes"
+
+# Security
 - security: "Security-related changes"
 
 # Development Flow
