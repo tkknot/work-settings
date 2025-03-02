@@ -26,6 +26,19 @@ All messages required in Japanese.
 - a11y: "Accessibility changes"
 - security: "Security-related changes"
 
+# Branch Mangement
+- main: "Production ready code"
+- develop: "Development integration branch"
+- feature/*: "New feature development branches"
+- bugfix/*: "Bug fix branches"
+- refactor/*: "Refactor branches"
+- update/*: "Update feature branches"
+- docs/*: "Documentation updates"
+
+```
+DO NOT MERGE TO MAIN BRANCH WITHOUT PULL REQUEST AND APPROVAL
+```
+
 # Development Flow
 ## feature_development_steps
 1. Create a new branch
@@ -38,8 +51,8 @@ All messages required in Japanese.
 8. Run tests
 9. Fix any failing tests
 10. Commit once tests pass
-11. Merge the branch
-12. Delete the branch after merging
+11. Write changelog in CHANGELOG.md
+12. Write change in docs/**.md
 ## bug_fix_steps
 1. Carefully investigate affected areas
 2. Create a new branch
@@ -47,8 +60,8 @@ All messages required in Japanese.
 4. Run tests
 5. Fix any failing tests
 6. Commit once tests pass
-7. Merge the branch
-8. Delete the branch after merging
+7. Write changelog in CHANGELOG.md
+8. Write change in docs/**.md
 
 # Programming Language
 TODO: Configure language settings according to the programming language
