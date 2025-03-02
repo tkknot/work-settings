@@ -1,5 +1,5 @@
 ---
-description: 
+description: Branch management rules
 globs: 
 alwaysApply: false
 ---
@@ -20,5 +20,5 @@ alwaysApply: true
 
 ## Branch Protection
 ```
-DO NOT MERGE TO MAIN BRANCH WITHOUT PULL REQUEST AND APPROVAL
+DO NOT MERGE TO MAIN/MASTER BRANCH WITHOUT PULL REQUEST AND APPROVAL
 ``` 
