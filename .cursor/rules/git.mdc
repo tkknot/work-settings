@@ -1,5 +1,5 @@
 ---
-description: 
+description: "
 globs: 
 alwaysApply: false
 ---
@@ -14,7 +14,8 @@ alwaysApply: true
 - Do not push to remote until instructed
 
 ## commit-prefixes:
-- feat: "Adding new features or modifying functionality"
+- feat: "Adding new features"
+- update: "Modifying features"
 - fix: "Bug fixes or typo corrections"
 - docs: "Adding documentation"
 - style: "Formatting changes, import order adjustments, or adding comments"
