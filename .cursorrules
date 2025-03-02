@@ -1,3 +1,6 @@
+# Directory Structure
+TODO: 採用技術やプロジェクトに応じたディレクトリ構成にする
+
 # Language Settings
 All messages required in Japanese.
 
@@ -25,11 +28,18 @@ All messages required in Japanese.
 
 # Development Flow
 ## feature_development_steps
-1. Execute initialization commands (e.g., bun init, uv init)
-2. Initialize git
-3. Verify and create the recommended directory structure if missing
-4. Install required libraries
-5. Confirm readiness to start development using commands
+1. Create a new branch
+2. Execute initialization commands (e.g., bun init, uv init)
+3. Initialize git
+4. Verify and create the recommended directory structure if missing
+5. Install required libraries
+6. Confirm readiness to start development using commands
+7. Implement the feature/changes
+8. Run tests
+9. Fix any failing tests
+10. Commit once tests pass
+11. Merge the branch
+12. Delete the branch after merging
 ## bug_fix_steps
 1. Carefully investigate affected areas
 2. Create a new branch
@@ -40,27 +50,40 @@ All messages required in Japanese.
 7. Merge the branch
 8. Delete the branch after merging
 
-# Directory Structure
-## recommend_directory_structure
-- src
-- docs
-- tests
-- assets (Includes project icons,demo,slides,etc.)
-- .env
-- .env.example
-- .gitignore
-- .gitattributes
-- README.md
-- experiment.ts(or experiment.py or experiment.rs etc....): You can use this file to experiment with code.
-
-# TypeScript Rules
-## recommendations
-- use bun as a package manager & runtime
-- Configure baseUrl as '.' and paths to use '@/*' alias for 'src/*' directory imports
+# Programming Language
+TODO: プログラミング言語に応じた言語設定をする
 
 # Shortcut Aliases
-- `/ask`: The user is requesting consultation on a policy decision. Provide a proactive response with a multi-faceted analysis. Unless given clear instructions, do not execute any tasks during the consultation.
-- `/plan`: Clearly and thoroughly outline a work plan and confirm there are no discrepancies. Proceed with execution only after reaching an agreement.
-- `/debug`: Identify the root cause of a bug. List 5-7 possible causes and narrow them down to 1-2. Utilize logs to validate hypotheses before applying fixes.
-- `/cmt`: Add appropriate comments and documentation to clarify the intent of the given code. Follow the existing code formatting.
-- `/log`: Consider the appropriate log level and record only necessary information. Design logs to be concise and avoid redundancy. Follow the existing code formatting.
+## コンサルティング系
+- `/ask`: "以下の課題について、多角的な分析と具体的な提案を提供してください：[課題]. 以下の観点から検討をお願いします：1) メリット・デメリット、2) 技術的な実現可能性、3) リスクと対策、4) 代替案. 分析は箇条書きで簡潔に提示し、最後に推奨案を示してください。"
+
+- `/plan`: "以下の機能実装について、詳細な作業計画を立案してください：[機能]. 以下を含めてください：1) 前提条件と制約、2) 作業項目の詳細（見積時間含む）、3) 依存関係、4) リスクと対策、5) 成功基準. 計画はフェーズ分けして提示し、各フェーズの目標を明確にしてください。"
+
+## デバッグ・改善系
+- `/debug`: "以下のバグについて、体系的なデバッグを行ってください：[バグの症状]. 手順：1) 考えられる原因を5-7個列挙、2) 各原因の可能性を評価（高/中/低）、3) 検証方法の提案、4) 最も可能性の高い1-2個の原因に絞り込み、5) 具体的な修正案の提示. ログやエラーメッセージがある場合は、それらも考慮に入れてください。"
+
+- `/refactor`: "以下のコードをリファクタリングしてください：[コード]. 以下の観点で改善を提案してください：1) 可読性、2) 保守性、3) パフォーマンス、4) テスト容易性. 各改善提案には理由を付記し、優先順位をつけてください。変更前後のコードを比較できる形で示してください。"
+
+## ドキュメント・コメント系
+- `/doc`: "以下のコードのドキュメントを作成してください：[コード]. 以下を含めてください：1) 概要と目的、2) アーキテクチャ/設計の説明、3) 主要機能の詳細、4) API仕様（入出力、例外）、5) 使用例、6) 注意事項. 必要に応じて図表を用いて説明してください。"
+
+- `/cmt`: "以下のコードにコメントを追加してください：[コード]. コメントは以下を明確にしてください：1) 処理の意図と目的、2) 重要な前提条件、3) 特殊なロジックの説明、4) 潜在的なリスクや注意点. コードの可読性を損なわないよう、簡潔かつ必要十分な情報を提供してください。"
+
+- `/log`: "以下のコードにログを追加してください：[コード]. 以下を考慮してください：1) 適切なログレベル（ERROR/WARN/INFO/DEBUG）の使い分け、2) 運用監視に必要な情報の特定、3) パフォーマンスへの影響、4) 個人情報・機密情報の扱い. 具体的なログメッセージと出力タイミングを提案してください。"
+
+## コード品質系
+- `/test`: "以下のコードのテストを作成してください：[コード]. 以下のテストケースを含めてください：1) 正常系、2) 異常系、3) 境界値、4) エッジケース. テストの目的と期待される結果を明記し、モック/スタブの使用方針も示してください。"
+
+- `/review`: "以下のコードをレビューしてください：[コード]. 以下の観点でチェックしてください：1) 機能要件との整合性、2) コーディング規約準拠、3) セキュリティ、4) パフォーマンス、5) エラーハンドリング、6) テスト網羅性. 重要度（高/中/低）を付けてフィードバックを提供してください。"
+
+- `/explain`: "以下のコードを詳細に説明してください：[コード]. 以下を含めてください：1) 全体の処理フロー、2) 重要な変数/関数の役割、3) アルゴリズムの説明、4) 設計上の工夫、5) 潜在的な問題点. 必要に応じて図表を用いて説明してください。"
+
+## Git操作系
+- `/commit`: "以下の変更をコミットします：[変更内容]. コミットメッセージは以下の形式で作成します：1) プレフィックスの選択、2) 変更の要約（50文字以内）、3) 詳細な変更内容、4) 関連するIssue/チケット. 変更を論理的な単位に分割してコミットするか判断してください。"
+
+- `/push`: "以下の変更をリモートリポジトリにプッシュします：[ブランチ名]. プッシュ前に以下を確認します：1) コミットの論理性、2) テストの実行結果、3) コードレビューの状態、4) コンフリクトの有無. 必要に応じてリベースやスカッシュの要否を判断してください。"
+
+- `/pull`: "リモートリポジトリから最新の変更を取得します：[ブランチ名]. 以下を実行します：1) ローカルの作業状態の確認、2) 取得戦略の決定（マージ/リベース）、3) コンフリクト解決方針の確認. コンフリクトが発生した場合の解決手順も示してください。"
+
+## 図表作成系
+- `/draw`: "以下の内容の図表を作成してください：[内容]. 以下の要素を含めてください：1) 全体構造、2) コンポーネント間の関係、3) データフロー、4) 重要なインタフェース. 図表は簡潔で理解しやすいものとし、必要に応じて補足説明を追加してください。"
