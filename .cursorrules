@@ -176,6 +176,14 @@ TODO: Configure language settings according to the programming language
   3) Confirm conflict resolution policy. 
   Provide conflict resolution steps if conflicts occur."
 
+- `/checkout`: "Switching to or creating branch: [BRANCH].
+  Pre-checkout checks:
+  1) Current work status (uncommitted changes)
+  2) Branch existence check
+  3) Remote branch status
+  4) Base branch selection if creating new.
+  Provide stash recommendations if needed and post-checkout steps."
+
 ## Diagram Creation Commands
 
 - `/draw`: "Please create a diagram for the following content: [CONTENT]. 
