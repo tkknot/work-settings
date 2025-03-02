@@ -8,44 +8,22 @@ All messages required in Japanese.
 ## command
 - Always add --no-pager when running Git commands
 - Do not push to remote until instructed
-
 ## commit-prefixes:
-# Feature & Functionality
 - feat: "Adding new features or modifying functionality"
-
-# Bug Fixes
 - fix: "Bug fixes or typo corrections"
-
-# Documentation
 - docs: "Adding documentation"
-
-# Code Style
 - style: "Formatting changes, import order adjustments, or adding comments"
-
-# Code Improvement
 - refactor: "Code refactoring without affecting functionality"
-- perf: "Performance improvement changes"
-
-# Testing
 - test: "Adding or modifying tests"
-
-# Infrastructure
 - ci: "Changes related to CI/CD"
 - docker: "Modifications to Dockerfile or container-related changes"
-- build: "Changes to build system or external dependencies"
-
-# Project Management
-- init: "Project initialization and setup"
 - chore: "Miscellaneous changes"
-
-# Version Control
+- init: "Project initialization and setup"
+- build: "Changes to build system or external dependencies"
+- perf: "Performance improvement changes"
 - revert: "Reverting previous commits"
-
-# Accessibility & Internationalization
 - i18n: "Internationalization changes"
 - a11y: "Accessibility changes"
-
-# Security
 - security: "Security-related changes"
 
 # Development Flow
@@ -76,36 +54,134 @@ All messages required in Japanese.
 TODO: Configure language settings according to the programming language
 
 # Shortcut Aliases
-## Consulting Commands
-- `/ask`: "Please provide a multi-faceted analysis and specific proposals for the following issue: [ISSUE]. Consider the following aspects: 1) Pros and cons, 2) Technical feasibility, 3) Risks and countermeasures, 4) Alternative solutions. Present the analysis in bullet points and conclude with a recommended solution."
 
-- `/plan`: "Please create a detailed work plan for implementing the following feature: [FEATURE]. Include: 1) Prerequisites and constraints, 2) Detailed work items (with time estimates), 3) Dependencies, 4) Risks and countermeasures, 5) Success criteria. Present the plan in phases with clear objectives for each phase."
+## Consulting Commands
+
+- `/ask`: "Please provide a multi-faceted analysis and specific proposals for the following issue: [ISSUE]. 
+  Consider the following aspects: 
+  1) Pros and cons
+  2) Technical feasibility
+  3) Risks and countermeasures
+  4) Alternative solutions. 
+  Present the analysis in bullet points and conclude with a recommended solution."
+
+- `/plan`: "Please create a detailed work plan for implementing the following feature: [FEATURE]. 
+  Include: 
+  1) Prerequisites and constraints
+  2) Detailed work items (with time estimates)
+  3) Dependencies
+  4) Risks and countermeasures
+  5) Success criteria. 
+  Present the plan in phases with clear objectives for each phase."
 
 ## Debugging & Improvement Commands
-- `/debug`: "Please perform systematic debugging for the following bug: [BUG SYMPTOMS]. Steps: 1) List 5-7 possible causes, 2) Evaluate each cause (high/medium/low probability), 3) Propose verification methods, 4) Narrow down to 1-2 most likely causes, 5) Present specific fix proposals. Consider logs and error messages if available."
 
-- `/refactor`: "Please refactor the following code: [CODE]. Propose improvements in these aspects: 1) Readability, 2) Maintainability, 3) Performance, 4) Testability. Include rationale for each improvement and prioritize them. Show before/after code comparison."
+- `/debug`: "Please perform systematic debugging for the following bug: [BUG SYMPTOMS]. 
+  Steps: 
+  1) List 5-7 possible causes
+  2) Evaluate each cause (high/medium/low probability)
+  3) Propose verification methods
+  4) Narrow down to 1-2 most likely causes
+  5) Present specific fix proposals. 
+  Consider logs and error messages if available."
+
+- `/refactor`: "Please refactor the following code: [CODE]. 
+  Propose improvements in these aspects: 
+  1) Readability
+  2) Maintainability
+  3) Performance
+  4) Testability. 
+  Include rationale for each improvement and prioritize them. 
+  Show before/after code comparison."
 
 ## Documentation & Comments Commands
-- `/doc`: "Please create documentation for the following code: [CODE]. Include: 1) Overview and purpose, 2) Architecture/design explanation, 3) Key functionality details, 4) API specifications (input/output, exceptions), 5) Usage examples, 6) Important notes. Use diagrams where appropriate."
 
-- `/cmt`: "Please add comments to the following code: [CODE]. Comments should clarify: 1) Intent and purpose of processing, 2) Important prerequisites, 3) Special logic explanation, 4) Potential risks and considerations. Keep comments concise while providing necessary information without compromising code readability."
+- `/doc`: "Please create documentation for the following code: [CODE]. 
+  Include: 
+  1) Overview and purpose
+  2) Architecture/design explanation
+  3) Key functionality details
+  4) API specifications (input/output, exceptions)
+  5) Usage examples
+  6) Important notes. 
+  Use diagrams where appropriate."
 
-- `/log`: "Please add logging to the following code: [CODE]. Consider: 1) Appropriate log levels (ERROR/WARN/INFO/DEBUG), 2) Information needed for operational monitoring, 3) Performance impact, 4) Handling of personal/confidential information. Propose specific log messages and output timing."
+- `/cmt`: "Please add comments to the following code: [CODE]. 
+  Comments should clarify: 
+  1) Intent and purpose of processing
+  2) Important prerequisites
+  3) Special logic explanation
+  4) Potential risks and considerations. 
+  Keep comments concise while providing necessary information without compromising code readability."
+
+- `/log`: "Please add logging to the following code: [CODE]. 
+  Consider: 
+  1) Appropriate log levels (ERROR/WARN/INFO/DEBUG)
+  2) Information needed for operational monitoring
+  3) Performance impact
+  4) Handling of personal/confidential information. 
+  Propose specific log messages and output timing."
 
 ## Code Quality Commands
-- `/test`: "Please create tests for the following code: [CODE]. Include these test cases: 1) Normal cases, 2) Error cases, 3) Boundary values, 4) Edge cases. Specify test purposes and expected results, and indicate mock/stub usage strategy."
 
-- `/review`: "Please review the following code: [CODE]. Check these aspects: 1) Functional requirements compliance, 2) Coding standards adherence, 3) Security, 4) Performance, 5) Error handling, 6) Test coverage. Provide feedback with priority levels (high/medium/low)."
+- `/test`: "Please create tests for the following code: [CODE]. 
+  Include these test cases: 
+  1) Normal cases
+  2) Error cases
+  3) Boundary values
+  4) Edge cases. 
+  Specify test purposes and expected results, and indicate mock/stub usage strategy."
 
-- `/explain`: "Please explain the following code in detail: [CODE]. Include: 1) Overall process flow, 2) Key variables/functions roles, 3) Algorithm explanation, 4) Design considerations, 5) Potential issues. Use diagrams where appropriate."
+- `/review`: "Please review the following code: [CODE]. 
+  Check these aspects: 
+  1) Functional requirements compliance
+  2) Coding standards adherence
+  3) Security
+  4) Performance
+  5) Error handling
+  6) Test coverage. 
+  Provide feedback with priority levels (high/medium/low)."
+
+- `/explain`: "Please explain the following code in detail: [CODE]. 
+  Include: 
+  1) Overall process flow
+  2) Key variables/functions roles
+  3) Algorithm explanation
+  4) Design considerations
+  5) Potential issues. 
+  Use diagrams where appropriate."
 
 ## Git Operation Commands
-- `/commit`: "Committing the following changes: [CHANGES]. Create commit message with: 1) Prefix selection, 2) Change summary (within 50 chars), 3) Detailed change description, 4) Related Issues/tickets. Evaluate if changes should be split into logical commit units."
 
-- `/push`: "Pushing the following changes to remote repository: [BRANCH]. Pre-push checks: 1) Commit logic, 2) Test execution results, 3) Code review status, 4) Conflict status. Evaluate need for rebase or squash."
+- `/commit`: "Committing the following changes: [CHANGES]. 
+  Create commit message with: 
+  1) Prefix selection
+  2) Change summary (within 50 chars)
+  3) Detailed change description
+  4) Related Issues/tickets. 
+  Evaluate if changes should be split into logical commit units."
 
-- `/pull`: "Fetching latest changes from remote repository: [BRANCH]. Execute: 1) Check local work status, 2) Determine fetch strategy (merge/rebase), 3) Confirm conflict resolution policy. Provide conflict resolution steps if conflicts occur."
+- `/push`: "Pushing the following changes to remote repository: [BRANCH]. 
+  Pre-push checks: 
+  1) Commit logic
+  2) Test execution results
+  3) Code review status
+  4) Conflict status. 
+  Evaluate need for rebase or squash."
+
+- `/pull`: "Fetching latest changes from remote repository: [BRANCH]. 
+  Execute: 
+  1) Check local work status
+  2) Determine fetch strategy (merge/rebase)
+  3) Confirm conflict resolution policy. 
+  Provide conflict resolution steps if conflicts occur."
 
 ## Diagram Creation Commands
-- `/draw`: "Please create a diagram for the following content: [CONTENT]. Include these elements: 1) Overall structure, 2) Component relationships, 3) Data flow, 4) Key interfaces. Keep the diagram concise and easy to understand, add supplementary explanations as needed."
+
+- `/draw`: "Please create a diagram for the following content: [CONTENT]. 
+  Include these elements: 
+  1) Overall structure
+  2) Component relationships
+  3) Data flow
+  4) Key interfaces. 
+  Keep the diagram concise and easy to understand, add supplementary explanations as needed."
