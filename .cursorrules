@@ -1,5 +1,5 @@
 # Directory Structure
-TODO: 採用技術やプロジェクトに応じたディレクトリ構成にする
+TODO: Customize directory structure based on adopted technologies and project requirements
 
 # Language Settings
 All messages required in Japanese.
@@ -18,13 +18,13 @@ All messages required in Japanese.
 - ci: "Changes related to CI/CD"
 - docker: "Modifications to Dockerfile or container-related changes"
 - chore: "Miscellaneous changes"
-- init: "プロジェクトの初期化やセットアップ"
-- build: "ビルドシステムや外部依存関係の変更"
-- perf: "パフォーマンス改善のための変更"
-- revert: "以前のコミットの取り消し"
-- i18n: "国際化対応の変更"
-- a11y: "アクセシビリティ対応の変更"
-- security: "セキュリティ関連の変更"
+- init: "Project initialization and setup"
+- build: "Changes to build system or external dependencies"
+- perf: "Performance improvement changes"
+- revert: "Reverting previous commits"
+- i18n: "Internationalization changes"
+- a11y: "Accessibility changes"
+- security: "Security-related changes"
 
 # Development Flow
 ## feature_development_steps
@@ -51,39 +51,39 @@ All messages required in Japanese.
 8. Delete the branch after merging
 
 # Programming Language
-TODO: プログラミング言語に応じた言語設定をする
+TODO: Configure language settings according to the programming language
 
 # Shortcut Aliases
-## コンサルティング系
-- `/ask`: "以下の課題について、多角的な分析と具体的な提案を提供してください：[課題]. 以下の観点から検討をお願いします：1) メリット・デメリット、2) 技術的な実現可能性、3) リスクと対策、4) 代替案. 分析は箇条書きで簡潔に提示し、最後に推奨案を示してください。"
+## Consulting Commands
+- `/ask`: "Please provide a multi-faceted analysis and specific proposals for the following issue: [ISSUE]. Consider the following aspects: 1) Pros and cons, 2) Technical feasibility, 3) Risks and countermeasures, 4) Alternative solutions. Present the analysis in bullet points and conclude with a recommended solution."
 
-- `/plan`: "以下の機能実装について、詳細な作業計画を立案してください：[機能]. 以下を含めてください：1) 前提条件と制約、2) 作業項目の詳細（見積時間含む）、3) 依存関係、4) リスクと対策、5) 成功基準. 計画はフェーズ分けして提示し、各フェーズの目標を明確にしてください。"
+- `/plan`: "Please create a detailed work plan for implementing the following feature: [FEATURE]. Include: 1) Prerequisites and constraints, 2) Detailed work items (with time estimates), 3) Dependencies, 4) Risks and countermeasures, 5) Success criteria. Present the plan in phases with clear objectives for each phase."
 
-## デバッグ・改善系
-- `/debug`: "以下のバグについて、体系的なデバッグを行ってください：[バグの症状]. 手順：1) 考えられる原因を5-7個列挙、2) 各原因の可能性を評価（高/中/低）、3) 検証方法の提案、4) 最も可能性の高い1-2個の原因に絞り込み、5) 具体的な修正案の提示. ログやエラーメッセージがある場合は、それらも考慮に入れてください。"
+## Debugging & Improvement Commands
+- `/debug`: "Please perform systematic debugging for the following bug: [BUG SYMPTOMS]. Steps: 1) List 5-7 possible causes, 2) Evaluate each cause (high/medium/low probability), 3) Propose verification methods, 4) Narrow down to 1-2 most likely causes, 5) Present specific fix proposals. Consider logs and error messages if available."
 
-- `/refactor`: "以下のコードをリファクタリングしてください：[コード]. 以下の観点で改善を提案してください：1) 可読性、2) 保守性、3) パフォーマンス、4) テスト容易性. 各改善提案には理由を付記し、優先順位をつけてください。変更前後のコードを比較できる形で示してください。"
+- `/refactor`: "Please refactor the following code: [CODE]. Propose improvements in these aspects: 1) Readability, 2) Maintainability, 3) Performance, 4) Testability. Include rationale for each improvement and prioritize them. Show before/after code comparison."
 
-## ドキュメント・コメント系
-- `/doc`: "以下のコードのドキュメントを作成してください：[コード]. 以下を含めてください：1) 概要と目的、2) アーキテクチャ/設計の説明、3) 主要機能の詳細、4) API仕様（入出力、例外）、5) 使用例、6) 注意事項. 必要に応じて図表を用いて説明してください。"
+## Documentation & Comments Commands
+- `/doc`: "Please create documentation for the following code: [CODE]. Include: 1) Overview and purpose, 2) Architecture/design explanation, 3) Key functionality details, 4) API specifications (input/output, exceptions), 5) Usage examples, 6) Important notes. Use diagrams where appropriate."
 
-- `/cmt`: "以下のコードにコメントを追加してください：[コード]. コメントは以下を明確にしてください：1) 処理の意図と目的、2) 重要な前提条件、3) 特殊なロジックの説明、4) 潜在的なリスクや注意点. コードの可読性を損なわないよう、簡潔かつ必要十分な情報を提供してください。"
+- `/cmt`: "Please add comments to the following code: [CODE]. Comments should clarify: 1) Intent and purpose of processing, 2) Important prerequisites, 3) Special logic explanation, 4) Potential risks and considerations. Keep comments concise while providing necessary information without compromising code readability."
 
-- `/log`: "以下のコードにログを追加してください：[コード]. 以下を考慮してください：1) 適切なログレベル（ERROR/WARN/INFO/DEBUG）の使い分け、2) 運用監視に必要な情報の特定、3) パフォーマンスへの影響、4) 個人情報・機密情報の扱い. 具体的なログメッセージと出力タイミングを提案してください。"
+- `/log`: "Please add logging to the following code: [CODE]. Consider: 1) Appropriate log levels (ERROR/WARN/INFO/DEBUG), 2) Information needed for operational monitoring, 3) Performance impact, 4) Handling of personal/confidential information. Propose specific log messages and output timing."
 
-## コード品質系
-- `/test`: "以下のコードのテストを作成してください：[コード]. 以下のテストケースを含めてください：1) 正常系、2) 異常系、3) 境界値、4) エッジケース. テストの目的と期待される結果を明記し、モック/スタブの使用方針も示してください。"
+## Code Quality Commands
+- `/test`: "Please create tests for the following code: [CODE]. Include these test cases: 1) Normal cases, 2) Error cases, 3) Boundary values, 4) Edge cases. Specify test purposes and expected results, and indicate mock/stub usage strategy."
 
-- `/review`: "以下のコードをレビューしてください：[コード]. 以下の観点でチェックしてください：1) 機能要件との整合性、2) コーディング規約準拠、3) セキュリティ、4) パフォーマンス、5) エラーハンドリング、6) テスト網羅性. 重要度（高/中/低）を付けてフィードバックを提供してください。"
+- `/review`: "Please review the following code: [CODE]. Check these aspects: 1) Functional requirements compliance, 2) Coding standards adherence, 3) Security, 4) Performance, 5) Error handling, 6) Test coverage. Provide feedback with priority levels (high/medium/low)."
 
-- `/explain`: "以下のコードを詳細に説明してください：[コード]. 以下を含めてください：1) 全体の処理フロー、2) 重要な変数/関数の役割、3) アルゴリズムの説明、4) 設計上の工夫、5) 潜在的な問題点. 必要に応じて図表を用いて説明してください。"
+- `/explain`: "Please explain the following code in detail: [CODE]. Include: 1) Overall process flow, 2) Key variables/functions roles, 3) Algorithm explanation, 4) Design considerations, 5) Potential issues. Use diagrams where appropriate."
 
-## Git操作系
-- `/commit`: "以下の変更をコミットします：[変更内容]. コミットメッセージは以下の形式で作成します：1) プレフィックスの選択、2) 変更の要約（50文字以内）、3) 詳細な変更内容、4) 関連するIssue/チケット. 変更を論理的な単位に分割してコミットするか判断してください。"
+## Git Operation Commands
+- `/commit`: "Committing the following changes: [CHANGES]. Create commit message with: 1) Prefix selection, 2) Change summary (within 50 chars), 3) Detailed change description, 4) Related Issues/tickets. Evaluate if changes should be split into logical commit units."
 
-- `/push`: "以下の変更をリモートリポジトリにプッシュします：[ブランチ名]. プッシュ前に以下を確認します：1) コミットの論理性、2) テストの実行結果、3) コードレビューの状態、4) コンフリクトの有無. 必要に応じてリベースやスカッシュの要否を判断してください。"
+- `/push`: "Pushing the following changes to remote repository: [BRANCH]. Pre-push checks: 1) Commit logic, 2) Test execution results, 3) Code review status, 4) Conflict status. Evaluate need for rebase or squash."
 
-- `/pull`: "リモートリポジトリから最新の変更を取得します：[ブランチ名]. 以下を実行します：1) ローカルの作業状態の確認、2) 取得戦略の決定（マージ/リベース）、3) コンフリクト解決方針の確認. コンフリクトが発生した場合の解決手順も示してください。"
+- `/pull`: "Fetching latest changes from remote repository: [BRANCH]. Execute: 1) Check local work status, 2) Determine fetch strategy (merge/rebase), 3) Confirm conflict resolution policy. Provide conflict resolution steps if conflicts occur."
 
-## 図表作成系
-- `/draw`: "以下の内容の図表を作成してください：[内容]. 以下の要素を含めてください：1) 全体構造、2) コンポーネント間の関係、3) データフロー、4) 重要なインタフェース. 図表は簡潔で理解しやすいものとし、必要に応じて補足説明を追加してください。"
+## Diagram Creation Commands
+- `/draw`: "Please create a diagram for the following content: [CONTENT]. Include these elements: 1) Overall structure, 2) Component relationships, 3) Data flow, 4) Key interfaces. Keep the diagram concise and easy to understand, add supplementary explanations as needed."
