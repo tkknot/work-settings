@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Directory structure rules
+globs: ["**/"]
+alwaysApply: true
+---
+# Directory Structure
+TODO: Customize directory structure based on adopted technologies and project requirements 

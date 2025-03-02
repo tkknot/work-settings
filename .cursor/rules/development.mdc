@@ -1,0 +1,34 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Development flow and processes
+globs: ["**/"]
+alwaysApply: true
+---
+# Development Flow
+## feature_development_steps
+1. Create a new branch
+2. Execute initialization commands (e.g., bun init, uv init)
+3. Initialize git
+4. Verify and create the recommended directory structure if missing
+5. Install required libraries
+6. Confirm readiness to start development using commands
+7. Implement the feature/changes
+8. Run tests
+9. Fix any failing tests
+10. Commit once tests pass
+11. Write changelog in CHANGELOG.md
+12. Write change in docs/**.md
+
+## bug_fix_steps
+1. Carefully investigate affected areas
+2. Create a new branch
+3. Implement the changes
+4. Run tests
+5. Fix any failing tests
+6. Commit once tests pass
+7. Write changelog in CHANGELOG.md
+8. Write change in docs/**.md 

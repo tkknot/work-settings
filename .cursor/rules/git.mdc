@@ -1,0 +1,32 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Git rules and commit prefixes
+globs: ["**/.git/**", "**/.gitignore"]
+alwaysApply: true
+---
+# Git Rules
+## command
+- Always add --no-pager when running Git commands
+- Do not push to remote until instructed
+
+## commit-prefixes:
+- feat: "Adding new features or modifying functionality"
+- fix: "Bug fixes or typo corrections"
+- docs: "Adding documentation"
+- style: "Formatting changes, import order adjustments, or adding comments"
+- refactor: "Code refactoring without affecting functionality"
+- test: "Adding or modifying tests"
+- ci: "Changes related to CI/CD"
+- docker: "Modifications to Dockerfile or container-related changes"
+- chore: "Miscellaneous changes"
+- init: "Project initialization and setup"
+- build: "Changes to build system or external dependencies"
+- perf: "Performance improvement changes"
+- revert: "Reverting previous commits"
+- i18n: "Internationalization changes"
+- a11y: "Accessibility changes"
+- security: "Security-related changes" 

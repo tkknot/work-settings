@@ -1,75 +1,16 @@
-# Directory Structure
-TODO: Customize directory structure based on adopted technologies and project requirements
-
-# Language Settings
-All messages required in Japanese.
-
-# Git Rules
-## command
-- Always add --no-pager when running Git commands
-- Do not push to remote until instructed
-## commit-prefixes:
-- feat: "Adding new features or modifying functionality"
-- fix: "Bug fixes or typo corrections"
-- docs: "Adding documentation"
-- style: "Formatting changes, import order adjustments, or adding comments"
-- refactor: "Code refactoring without affecting functionality"
-- test: "Adding or modifying tests"
-- ci: "Changes related to CI/CD"
-- docker: "Modifications to Dockerfile or container-related changes"
-- chore: "Miscellaneous changes"
-- init: "Project initialization and setup"
-- build: "Changes to build system or external dependencies"
-- perf: "Performance improvement changes"
-- revert: "Reverting previous commits"
-- i18n: "Internationalization changes"
-- a11y: "Accessibility changes"
-- security: "Security-related changes"
-
-# Branch Mangement
-- main: "Production ready code"
-- develop: "Development integration branch"
-- feature/*: "New feature development branches"
-- bugfix/*: "Bug fix branches"
-- refactor/*: "Refactor branches"
-- update/*: "Update feature branches"
-- docs/*: "Documentation updates"
-
-```
-DO NOT MERGE TO MAIN BRANCH WITHOUT PULL REQUEST AND APPROVAL
-```
-
-# Development Flow
-## feature_development_steps
-1. Create a new branch
-2. Execute initialization commands (e.g., bun init, uv init)
-3. Initialize git
-4. Verify and create the recommended directory structure if missing
-5. Install required libraries
-6. Confirm readiness to start development using commands
-7. Implement the feature/changes
-8. Run tests
-9. Fix any failing tests
-10. Commit once tests pass
-11. Write changelog in CHANGELOG.md
-12. Write change in docs/**.md
-## bug_fix_steps
-1. Carefully investigate affected areas
-2. Create a new branch
-3. Implement the changes
-4. Run tests
-5. Fix any failing tests
-6. Commit once tests pass
-7. Write changelog in CHANGELOG.md
-8. Write change in docs/**.md
-
-# Programming Language
-TODO: Configure language settings according to the programming language
-
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Shortcut aliases for development commands
+globs: ["**/"]
+alwaysApply: true
+---
 # Shortcut Aliases
 
 ## Consulting Commands
-
 - `/ask`: "Please provide a multi-faceted analysis and specific proposals for the following issue: [ISSUE]. 
   Consider the following aspects: 
   1) Pros and cons
@@ -88,7 +29,6 @@ TODO: Configure language settings according to the programming language
   Present the plan in phases with clear objectives for each phase."
 
 ## Debugging & Improvement Commands
-
 - `/debug`: "Please perform systematic debugging for the following bug: [BUG SYMPTOMS]. 
   Steps: 
   1) List 5-7 possible causes
@@ -108,7 +48,6 @@ TODO: Configure language settings according to the programming language
   Show before/after code comparison."
 
 ## Documentation & Comments Commands
-
 - `/doc`: "Please create documentation for the following code: [CODE]. 
   Include: 
   1) Overview and purpose
@@ -136,7 +75,6 @@ TODO: Configure language settings according to the programming language
   Propose specific log messages and output timing."
 
 ## Code Quality Commands
-
 - `/test`: "Please create tests for the following code: [CODE]. 
   Include these test cases: 
   1) Normal cases
@@ -165,13 +103,21 @@ TODO: Configure language settings according to the programming language
   Use diagrams where appropriate."
 
 ## Git Operation Commands
-
 - `/commit`: "Committing the following changes: [CHANGES]. 
   Create commit message with: 
   1) Prefix selection
   2) Change summary (within 50 chars)
   3) Detailed change description
   4) Related Issues/tickets. 
+  Evaluate if changes should be split into logical commit units."
+
+- `/pr`: "Creating a pull request for the following changes: [CHANGES]. 
+  Include: 
+  1) Change summary
+  2) Detailed description
+  3) Related issues/tickets
+  4) Reviewers
+  5) Labels/milestones. 
   Evaluate if changes should be split into logical commit units."
 
 - `/push`: "Pushing the following changes to remote repository: [BRANCH]. 
@@ -198,11 +144,10 @@ TODO: Configure language settings according to the programming language
   Provide stash recommendations if needed and post-checkout steps."
 
 ## Diagram Creation Commands
-
 - `/draw`: "Please create a diagram for the following content: [CONTENT]. 
   Include these elements: 
   1) Overall structure
   2) Component relationships
   3) Data flow
   4) Key interfaces. 
-  Keep the diagram concise and easy to understand, add supplementary explanations as needed."
+  Keep the diagram concise and easy to understand, add supplementary explanations as needed." 

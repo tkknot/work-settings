@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Language settings
+globs: ["**/"]
+alwaysApply: true
+---
+# Language Settings
+All messages required in Japanese.
