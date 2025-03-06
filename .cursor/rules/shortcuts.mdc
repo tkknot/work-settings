@@ -135,6 +135,15 @@ alwaysApply: true
   3) Confirm conflict resolution policy. 
   Provide conflict resolution steps if conflicts occur."
 
+- `/prcomment`: "Create review comments for the pull request of the current branch.
+  Execute automatically with the following steps:
+  1) Get the current branch name
+  2) Identify the associated pull request
+  3) Analyze branch changes:
+     - List of modified files
+     - Changes in each file (additions/deletions/modifications)
+  4) Post generated comments to the pull request"
+
 - `/checkout`: "Switching to or creating branch: [BRANCH].
   Pre-checkout checks:
   1) Current work status (uncommitted changes)
