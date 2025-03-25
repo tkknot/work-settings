@@ -1,3 +1,18 @@
+# 統合Cursor Rules
+最終更新日: 2024年3月25日
+
+## 目次
+1. [shortcuts.mdc](#1-shortcutsmdc)
+2. [branch.mdc](#2-branchmdc)
+3. [git.mdc](#3-gitmdc)
+4. [language.mdc](#4-languagemdc)
+5. [directory.mdc](#5-directorymdc)
+6. [development.mdc](#6-developmentmdc)
+
+<a id="1-shortcutsmdc"></a>
+## 1. shortcuts.mdc
+元ファイル: `.cursor/rules/shortcuts.mdc`
+
 ---
 description: 
 globs: 
@@ -205,3 +220,143 @@ alwaysApply: true
   3) Create a new file `.cursor/doc/masterrules.md` (create directory if it doesn't exist)
   4) Consolidate all rules' Front Matter (the parts surrounded by `---`) and contents
   5) Report the path of the consolidated file and the number of rules included" 
+
+<a id="2-branchmdc"></a>
+## 2. branch.mdc
+元ファイル: `.cursor/rules/branch.mdc`
+
+---
+description: Branch management rules
+globs: 
+alwaysApply: false
+---
+---
+description: Branch management rules
+globs: ["**/.git/**"]
+alwaysApply: true
+---
+# Branch Management
+## Branch Types
+- main: "Production ready code"
+- develop: "Development integration branch"
+- feature/*: "New feature development branches"
+- bugfix/*: "Bug fix branches"
+- refactor/*: "Refactor branches"
+- update/*: "Update feature branches"
+- docs/*: "Documentation updates"
+
+## Branch Protection
+```
+DO NOT MERGE TO MAIN/MASTER BRANCH WITHOUT PULL REQUEST AND APPROVAL
+```
+
+<a id="3-gitmdc"></a>
+## 3. git.mdc
+元ファイル: `.cursor/rules/git.mdc`
+
+---
+description: "
+globs: 
+alwaysApply: false
+---
+---
+description: Git rules and commit prefixes
+globs: ["**/.git/**", "**/.gitignore"]
+alwaysApply: true
+---
+# Git Rules
+## command
+- Always add --no-pager when running Git commands
+- Do not push to remote until instructed
+
+## commit-prefixes:
+- feat: "Adding new features"
+- update: "Modifying features"
+- fix: "Bug fixes or typo corrections"
+- docs: "Adding documentation"
+- style: "Formatting changes, import order adjustments, or adding comments"
+- refactor: "Code refactoring without affecting functionality"
+- test: "Adding or modifying tests"
+- ci: "Changes related to CI/CD"
+- docker: "Modifications to Dockerfile or container-related changes"
+- chore: "Miscellaneous changes"
+- init: "Project initialization and setup"
+- build: "Changes to build system or external dependencies"
+- perf: "Performance improvement changes"
+- revert: "Reverting previous commits"
+- i18n: "Internationalization changes"
+- a11y: "Accessibility changes"
+- security: "Security-related changes"
+
+<a id="4-languagemdc"></a>
+## 4. language.mdc
+元ファイル: `.cursor/rules/language.mdc`
+
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Language settings
+globs: ["**/"]
+alwaysApply: true
+---
+# Language Settings
+All messages required in Japanese.
+
+<a id="5-directorymdc"></a>
+## 5. directory.mdc
+元ファイル: `.cursor/rules/directory.mdc`
+
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Directory structure rules
+globs: ["**/"]
+alwaysApply: true
+---
+# Directory Structure
+TODO: Customize directory structure based on adopted technologies and project requirements
+
+<a id="6-developmentmdc"></a>
+## 6. development.mdc
+元ファイル: `.cursor/rules/development.mdc`
+
+---
+description: 
+globs: 
+alwaysApply: false
+---
+---
+description: Development flow and processes
+globs: ["**/"]
+alwaysApply: true
+---
+# Development Flow
+## feature_development_steps
+1. Create a new branch
+2. Execute initialization commands (e.g., bun init, uv init)
+3. Initialize git
+4. Verify and create the recommended directory structure if missing
+5. Install required libraries
+6. Confirm readiness to start development using commands
+7. Implement the feature/changes
+8. Run tests
+9. Fix any failing tests
+10. Commit once tests pass
+11. Write changelog in CHANGELOG.md
+12. Write change in docs/**.md
+
+## bug_fix_steps
+1. Carefully investigate affected areas
+2. Create a new branch
+3. Implement the changes
+4. Run tests
+5. Fix any failing tests
+6. Commit once tests pass
+7. Write changelog in CHANGELOG.md
+8. Write change in docs/**.md 
