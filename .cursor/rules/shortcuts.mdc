@@ -4,6 +4,11 @@ globs:
 alwaysApply: false
 ---
 ---
+description: 
+globs: 
+alwaysApply: false
+---
+---
 description: Shortcut aliases for development commands
 globs: ["**/"]
 alwaysApply: true
@@ -101,17 +106,6 @@ alwaysApply: true
   4) Design considerations
   5) Potential issues. 
   Use diagrams where appropriate."
-
-- `/rewrite`: "Please suggest alternative implementation approaches for the following code: [CODE].
-  Consider multiple different implementation patterns focusing on these aspects:
-  1) Readability and maintainability improvement
-  2) Efficiency and performance optimization
-  3) Usage of modern language features and best practices
-  4) Error handling improvement
-  5) Extensibility enhancement
-  6) Different implementation patterns within the same language (functional, object-oriented, etc.)
-  For each implementation pattern, explain advantages, disadvantages, and when to choose it.
-  Provide a recommendation on the preferred pattern and rationale."
 
 ## Git Operation Commands
 - `/commit`: "Committing the following changes: [CHANGES]. 
