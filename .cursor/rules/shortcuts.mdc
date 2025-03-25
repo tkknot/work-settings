@@ -4,11 +4,6 @@ globs:
 alwaysApply: false
 ---
 ---
-description: 
-globs: 
-alwaysApply: false
----
----
 description: Shortcut aliases for development commands
 globs: ["**/"]
 alwaysApply: true
@@ -106,6 +101,43 @@ alwaysApply: true
   4) Design considerations
   5) Potential issues. 
   Use diagrams where appropriate."
+
+- `/rewrite`: "Please suggest alternative implementation approaches for the following code: [CODE].
+  Consider multiple different implementation patterns focusing on these aspects:
+  1) Readability and maintainability improvement
+  2) Efficiency and performance optimization
+  3) Usage of modern language features and best practices
+  4) Error handling improvement
+  5) Extensibility enhancement
+  6) Different implementation patterns within the same language (functional, object-oriented, etc.)
+  For each implementation pattern, explain advantages, disadvantages, and when to choose it.
+  Provide a recommendation on the preferred pattern and rationale."
+
+- `/tdd`: "Please guide me through Test-Driven Development.
+
+  TDD Process:
+  0) First, create a TODO list in 'doc/tdd/todo.md' (create the file if it doesn't exist).
+     Break down the feature or problem into specific, concrete tasks in this list.
+  
+  Repeat the following cycle for each task:
+  1) Select the next task from the TODO list
+  2) Write a failing test that defines the expected behavior
+  3) Implement minimal code to make the test pass
+  4) Verify the test passes
+  5) When the test passes, use the `/commit` command to commit changes (excluding todo.md)
+  6) Refactor the code while ensuring tests still pass
+  7) After refactoring, use the `/commit` command again to commit changes
+  8) Remove the completed task from the TODO list
+  9) Repeat the above steps until all items in todo.md are completed
+  
+  For each cycle, provide:
+  - Clear test assertions and expected outcomes
+  - Implementation suggestions with minimal viable code
+  - Refactoring recommendations to improve code quality
+  - Considerations for edge cases and error handling
+  
+  Start with the simplest tasks and progressively handle more complex ones.
+  Once all TODO items are completed, confirm that the development is complete."
 
 ## Git Operation Commands
 - `/commit`: "Committing the following changes: [CHANGES]. 
