@@ -4,9 +4,9 @@ globs:
 alwaysApply: false
 ---
 ---
-description: Directory structure rules
+description: ディレクトリ構造ルール
 globs: ["**/"]
 alwaysApply: true
 ---
-# Directory Structure
-TODO: Customize directory structure based on adopted technologies and project requirements 
+# ディレクトリ構造
+TODO: 採用する技術とプロジェクト要件に基づいてディレクトリ構造をカスタマイズする 

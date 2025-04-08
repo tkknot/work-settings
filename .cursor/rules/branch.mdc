@@ -1,24 +1,24 @@
 ---
-description: Branch management rules
+description: ブランチ管理ルール
 globs: 
 alwaysApply: false
 ---
 ---
-description: Branch management rules
+description: ブランチ管理ルール
 globs: ["**/.git/**"]
 alwaysApply: true
 ---
-# Branch Management
-## Branch Types
-- main: "Production ready code"
-- develop: "Development integration branch"
-- feature/*: "New feature development branches"
-- bugfix/*: "Bug fix branches"
-- refactor/*: "Refactor branches"
-- update/*: "Update feature branches"
-- docs/*: "Documentation updates"
+# ブランチ管理
+## ブランチタイプ
+- main: "本番環境対応のコード"
+- develop: "開発統合ブランチ"
+- feature/*: "新機能開発ブランチ"
+- bugfix/*: "バグ修正ブランチ"
+- refactor/*: "リファクタリングブランチ"
+- update/*: "機能更新ブランチ"
+- docs/*: "ドキュメント更新ブランチ"
 
-## Branch Protection
+## ブランチ保護
 ```
-DO NOT MERGE TO MAIN/MASTER BRANCH WITHOUT PULL REQUEST AND APPROVAL
+プルリクエストと承認なしにMAIN/MASTERブランチにマージしないでください
 ``` 

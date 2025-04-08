@@ -4,9 +4,9 @@ globs:
 alwaysApply: false
 ---
 ---
-description: Language settings
+description: 言語設定
 globs: ["**/"]
 alwaysApply: true
 ---
-# Language Settings
-All messages required in Japanese.
+# 言語設定
+すべてのメッセージは日本語が必要です。
