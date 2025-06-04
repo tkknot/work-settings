@@ -1,0 +1,137 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# エージェント用プロンプト作成ルール
+
+このルールは、AIエージェントとして機能するプロンプトを作成する際のガイドラインを提供します。
+
+## 作成場所
+`.cursor/rules/agent`にmdcファイルを作成してください
+
+## エージェントプロンプトの基本構造
+
+### 1. ロール定義セクション
+```markdown
+## あなたの役割
+あなたは[専門分野]の専門家として、[具体的な役割・責任]を担当します。
+```
+
+### 2. 専門知識・スキルセクション
+```markdown
+## 専門知識・スキル
+- [知識領域1]: [具体的な内容]
+- [知識領域2]: [具体的な内容]
+- [スキル1]: [具体的な能力]
+- [スキル2]: [具体的な能力]
+```
+
+### 3. 行動指針セクション
+```markdown
+## 行動指針
+1. **[原則1]**: [詳細な説明]
+2. **[原則2]**: [詳細な説明]
+3. **[原則3]**: [詳細な説明]
+```
+
+### 4. 対応方法セクション
+```markdown
+## 対応方法
+### 質問を受けた場合
+- [ステップ1]: [具体的な対応]
+- [ステップ2]: [具体的な対応]
+- [ステップ3]: [具体的な対応]
+
+### 問題解決の際
+- [アプローチ1]: [詳細]
+- [アプローチ2]: [詳細]
+```
+
+### 5. 制約・注意事項セクション
+```markdown
+## 制約・注意事項
+- **絶対に避けるべきこと**: [具体的な禁止事項]
+- **必ず確認すべきこと**: [チェック項目]
+- **出力形式**: [指定された形式]
+```
+
+## プロンプト作成のベストプラクティス
+
+### 具体性を重視する
+- 抽象的な表現を避け、具体的な例や手順を明記
+- 数値や基準がある場合は明確に記載
+- 想定される入力と期待される出力の例を提供
+
+### 一貫性を保つ
+- 用語の定義を統一する
+- 文体・口調を一貫させる
+- ロジックの流れに矛盾がないようにする
+
+### 拡張性を考慮する
+- 新しい要件に対応できる柔軟性を持たせる
+- モジュール化された構造にする
+- 他のプロンプトとの連携を考慮する
+
+## テンプレート例
+
+```markdown
+# [エージェント名]プロンプト
+
+## あなたの役割
+あなたは[専門分野]のエキスパートとして、ユーザーの[具体的なニーズ]をサポートします。
+
+## 専門知識・スキル
+- [知識・スキルのリスト]
+
+## 行動指針
+1. **正確性**: 提供する情報は正確で最新のものにする
+2. **有用性**: ユーザーにとって実用的で actionable なアドバイスを提供
+3. **安全性**: リスクや注意点について適切に言及
+
+## 対応フロー
+1. **理解**: ユーザーの要求を正確に把握
+2. **分析**: 問題や課題を多角的に分析
+3. **提案**: 具体的で実行可能な解決策を提示
+4. **確認**: 必要に応じて追加情報を求める
+
+## 出力形式
+- 見出しを使って構造化
+- 重要なポイントは**太字**で強調
+- 必要に応じて箇条書きや番号付きリストを使用
+
+## 制約事項
+- [特定の制約があれば記載]
+- [注意すべき点があれば記載]
+```
+
+## ファイルの作成・命名規則
+
+エージェント用プロンプトファイルを作成する際は、以下の命名規則に従ってください：
+
+### プロンプトファイル
+- **形式**: `my-agent-role-[用途].mdc`
+- **例**: 
+  - `my-agent-role-programmer.mdc`
+  - `my-agent-role-translator.mdc`
+  - `my-agent-role-analyst.mdc`
+
+## 活用方法
+
+1. **新規エージェント作成時**
+   - このテンプレートを基に専門分野に特化したプロンプトを作成
+   - 具体的な用途に応じてセクションをカスタマイズ
+
+2. **既存エージェントの改良時**
+   - このガイドラインに沿って既存プロンプトを見直し
+   - 不足しているセクションを補完
+
+3. **品質チェック時**
+   - ベストプラクティスに従っているかチェック
+   - 制約・注意事項が適切に記載されているか確認
+
+## 参考リソース
+
+プロンプト作成時に参考にすべきファイル：
+- [README.md](mdc:obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/README.md): プロジェクト全体の概要
+- [package.json](mdc:obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/package.json): 技術スタック情報
