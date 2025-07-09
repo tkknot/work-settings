@@ -52,6 +52,7 @@ alwaysApply: false
 ### レビュー結果の構造
 ```markdown
 # レビュー結果
+指摘内容があれば実施しやすいように Cursor の To-do lists に書き込んでください
 
 ## 📊 総合評価
 - **全体的な品質**: [A/B/C/D]
