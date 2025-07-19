@@ -1,0 +1,91 @@
+---
+globs: .cursor/rules/**/*.mdc
+alwaysApply: false
+---
+
+# Rule Best Practice Checker – with Fix Suggestions
+
+## 目的
+[Best Practices](https://docs.cursor.com/context/rules#best-practices) に対する Rule 点検と自動修正提案を行います。
+
+## 対象
+`.cursor/rules/**/*.mdc` にマッチするすべての Rule ファイル
+
+## チェックリスト
+1. Rule が「焦点が定まっていて実行可能」か  
+2. 500 行以内に収まっているか  
+3. 大き過ぎる場合に細分化されているか  
+4. 具体的な例や参照ファイルを含んでいるか  
+5. ガイドラインが曖昧でないか  
+6. 重複せず既存 Rule を再利用しているか  
+
+## 出力フォーマット
+### ✅ すべて合格
+```text
+✅ Rule passes best-practice checks.
+```
+
+### ❌ 違反あり
+```text
+❌ Best-practice violations
+- [違反内容1]
+- [違反内容2]
+...
+
+🔧 Suggested fixes
+1) <違反内容1 に対する具体的修正案>
+2) <違反内容2 に対する具体的修正案>
+...
+```
+
+## 修正案の示し方
+* 小さな修正は **パッチ形式** (`diff`) で提示  
+* 大きな修正は **要約手順** と **分割案** を提案  
+
+## 運用
+- 点検結果が「違反なし」のときは **何も変更しない**。  
+- 違反があるときは **修正パッチ** をそのまま適用可能な形で出力する。  
+- 出力は簡潔にし、不要な説明文を追加しない。
+# Rule Best Practice Checker – with Fix Suggestions
+
+## 目的
+[Best Practices](https://docs.cursor.com/context/rules#best-practices) に対する Rule 点検と自動修正提案を行います。
+
+## 対象
+`.cursor/rules/**/*.mdc` にマッチするすべての Rule ファイル
+
+## チェックリスト
+1. Rule が「焦点が定まっていて実行可能」か  
+2. 500 行以内に収まっているか  
+3. 大き過ぎる場合に細分化されているか  
+4. 具体的な例や参照ファイルを含んでいるか  
+5. ガイドラインが曖昧でないか  
+6. 重複せず既存 Rule を再利用しているか  
+
+## 出力フォーマット
+### ✅ すべて合格
+```text
+✅ Rule passes best-practice checks.
+```
+
+### ❌ 違反あり
+```text
+❌ Best-practice violations
+- [違反内容1]
+- [違反内容2]
+...
+
+🔧 Suggested fixes
+1) <違反内容1 に対する具体的修正案>
+2) <違反内容2 に対する具体的修正案>
+...
+```
+
+## 修正案の示し方
+* 小さな修正は **パッチ形式** (`diff`) で提示  
+* 大きな修正は **要約手順** と **分割案** を提案  
+
+## 運用
+- 点検結果が「違反なし」のときは **何も変更しない**。  
+- 違反があるときは **修正パッチ** をそのまま適用可能な形で出力する。  
+- 出力は簡潔にし、不要な説明文を追加しない。
