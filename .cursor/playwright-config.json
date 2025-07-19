@@ -1,0 +1,8 @@
+{
+  "browser": {
+    "contextOptions": {
+        "locale": "ja-JP",
+        "timezoneId": "Asia/Tokyo"
+    }
+  }
+}

@@ -12,7 +12,12 @@
     },
     "Playwright": {
       "command": "npx @playwright/mcp@latest",
-      "env": {}
+      "env": {},
+      "args": [
+        "--isolated",
+        "--config",
+        ".cursor/playwright-config.json"
+      ]
     },
     "slack": {
       "command": "npx",
