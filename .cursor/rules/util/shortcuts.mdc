@@ -6,11 +6,11 @@ alwaysApply: true
 
 ## コンサルティングコマンド
 - `/ask`: "以下の問題について多角的な分析と具体的な提案を提供してください: [ISSUE]。
-  分析は@.cursor\rules\agent\researcher.mdc
-  提案を@.cursor\rules\util\plan-mode.mdcをそれぞれ利用して遂行してください。"
+  分析は`@.cursor\rules\agent\researcher.mdc`
+  提案を`@.cursor\rules\util\plan-mode.mdc`をそれぞれ利用して遂行してください。"
 
 - `/plan`: "
-  @.cursor\rules\util\plan-mode.mdc
+  `@.cursor\rules\util\plan-mode.mdc`
   を呼び出してください。"
 
 ## デバッグと改善コマンド
@@ -61,9 +61,8 @@ alwaysApply: true
   テストの目的と期待される結果を指定し、モック/スタブの使用戦略を示してください。"
 
 - `/review`: "
-  PRのレビューは@.cursor\rules\util\pr-review.mdc
-  技術的なドキュメントのレビューは.cursor\rules\agent\technical-writer.mdc
-  その他のドキュメントのレビューは.cursor\rules\agent\text-reviewer.mdc
+  PRのレビューは`@.cursor\rules\util\pr-review.mdc`
+  その他のレビューは`@.cursor\rules\agent\text-reviewer.mdc`
   を呼び出してください
   "
 
@@ -138,4 +137,4 @@ alwaysApply: true
 ## ダイアグラム作成コマンド
 - `/draw`: "与えられた内容についての設計図をmermaidで作成してください: [CONTENT]。"
 
-- `/slide`: @.cursor\rules\util\marp-slides.mdcを呼び出し、スライドの作成を開始してください"
+- `/slide`: `@.cursor\rules\util\marp-slides.mdc`を呼び出し、スライドの作成を開始してください"
