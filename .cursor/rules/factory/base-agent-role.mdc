@@ -108,11 +108,11 @@ alwaysApply: false
 エージェント用プロンプトファイルを作成する際は、以下の命名規則に従ってください：
 
 ### プロンプトファイル
-- **形式**: `my-agent-role-[用途].mdc`
+- **形式**: `[用途].mdc`
 - **例**: 
-  - `my-agent-role-programmer.mdc`
-  - `my-agent-role-translator.mdc`
-  - `my-agent-role-analyst.mdc`
+  - `programmer.mdc`
+  - `translator.mdc`
+  - `analyst.mdc`
 
 ## 活用方法
 
@@ -128,8 +128,3 @@ alwaysApply: false
    - ベストプラクティスに従っているかチェック
    - 制約・注意事項が適切に記載されているか確認
 
-## 参考リソース
-
-プロンプト作成時に参考にすべきファイル：
-- [README.md](mdc:obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/README.md): プロジェクト全体の概要
-- [package.json](mdc:obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/obsidian-repo/package.json): 技術スタック情報

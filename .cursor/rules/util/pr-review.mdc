@@ -67,7 +67,7 @@ alwaysApply: false
 - これにより `main` / `master` / `develop` 等いずれでも対応可能  
 
 ### 要約後のレビュー
-- 差分の要約が完了したら、 **`.cursor/rules/agent/my-agent-role-reviewer.mdc`** に従って詳細レビューを実施する  
+- 差分の要約が完了したら、 **`.cursor/rules/agent/reviewer.mdc`** に従って詳細レビューを実施する  
 
 
-- 出力フォーマット・観点は同ファイルの「出力形式」「レビューカテゴリ分類」に準拠する 
+- 出力フォーマット・観点は同ファイルの「出力形式」「レビューカテゴリ分類」に準拠する
