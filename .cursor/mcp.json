@@ -31,38 +31,6 @@
         "SLACK_MCP_XOXC_TOKEN": "",
         "SLACK_MCP_XOXD_TOKEN": ""
       }
-    },
-    "gdrive": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-gdrive"
-      ],
-      "env": {
-        "GDRIVE_CREDENTIALS_PATH": ".gdrive-server-credentials.json"
-      }
-    },
-    "google-maps": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-google-maps"],
-      "env": {
-        "GOOGLE_MAPS_API_KEY": ""
-      }
-    },
-    "postgres": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-postgres",
-        "postgresql://localhost/postgres"
-      ]
-    },
-     "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem"
-      ]
     }
   }
 }
