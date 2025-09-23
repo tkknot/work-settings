@@ -1,6 +1,6 @@
 ---
 globs: .cursor/rules/**/*.mdc
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Rule Best Practice Checker – with Fix Suggestions

@@ -20,6 +20,7 @@
   "git.autofetch": true,
   "git.enableSmartCommit": true,
   "editor.detectIndentation": false,
+  "editor.smoothScrolling": true,
   "files.autoGuessEncoding": true,
   "editor.semanticTokenColorCustomizations": null,
   "workbench.startupEditor": "none",
