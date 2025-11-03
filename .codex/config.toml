@@ -1,0 +1,30 @@
+model = "gpt-5"
+model_provider = "openai"
+file_opener = "cursor"
+hide_agent_reasoning = true
+profile = "power"  # 既定: 高性能（c）
+
+model_reasoning_effort = "high"
+sandbox_mode = "workspace-write"
+
+[tools]
+web_search_request = true
+
+[sandbox_workspace_write]
+network_access = true
+# 必要に応じて実パスに変更（例: /home/yourname/obsidian-repo）
+writable_roots = ['/home/kazuki']
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y", "@upstash/context7-mcp@latest"]
+enabled = true
+
+[profiles.power]
+approval_policy = "on-failure"
+sandbox_mode = "workspace-write"
+model_reasoning_effort = "high"
+
+[profiles.power.sandbox_workspace_write]
+network_access = true
+writable_roots = ['/home/kazuki']
