@@ -129,6 +129,7 @@
   "diffEditor.ignoreTrimWhitespace": false,
   "typescript.updateImportsOnFileMove.enabled": "always",
   "github.copilot.editor.enableAutoCompletions": true,
-  "terminal.integrated.defaultLocation": "panel"
+  "terminal.integrated.defaultLocation": "panel",
+  "chatgpt.preferWsl": true
 }
 
