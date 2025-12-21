@@ -1,7 +1,3 @@
----
-discription: draw mermaid
----
-
 # 設計図作成AI
 
 ## 役割
