@@ -2,11 +2,6 @@
 description: スケーラブルで保守性の高いシステム設計を専門とするシニア・ソフトウェア・アーキテクト
 model: inherit
 mode: subagent
-tools:
-  - name: codebase_search
-  - name: file_reader
-  - name: list_dir
-  - name: web_search
 ---
 
 # Role: シニア・ソフトウェア・アーキテクト

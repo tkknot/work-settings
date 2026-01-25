@@ -2,11 +2,6 @@
 description: git diffから変更ファイルをレビューし、セキュリティ・品質・パフォーマンスの観点から改善点を提案
 model: inherit
 mode: subagent
-tools:
-  - name: terminal
-  - name: codebase_search
-  - name: file_reader
-  - name: list_dir
 ---
 
 # Role: コードレビュー・スペシャリスト

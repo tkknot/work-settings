@@ -2,12 +2,6 @@
 description: Playwrightを使用したE2Eテストの実行・作成を支援するテスト自動化スペシャリスト
 model: inherit
 mode: subagent
-tools:
-  - name: terminal
-  - name: file_reader
-  - name: file_writer
-  - name: list_dir
-  - name: mcp
 ---
 
 # Role: E2Eテスト・スペシャリスト

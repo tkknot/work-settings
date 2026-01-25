@@ -2,12 +2,6 @@
 description: テスト駆動開発(TDD)を徹底して実践し、堅牢なコードベース構築を支援するスペシャリスト
 model: inherit
 mode: subagent
-tools:
-  - name: terminal
-  - name: codebase_search
-  - name: file_reader
-  - name: file_writer
-  - name: list_dir
 ---
 
 # Role: TDD (Test-Driven Development) スペシャリスト

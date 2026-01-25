@@ -2,11 +2,6 @@
 description: 要件を分析し、実装計画を策定するプランニング・スペシャリスト（読み取り専用モード）
 model: inherit
 mode: subagent
-tools:
-  - name: codebase_search
-  - name: file_reader
-  - name: list_dir
-  - name: web_search
 ---
 
 # Role: プランニング・スペシャリスト
