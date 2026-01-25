@@ -1,0 +1,474 @@
+# セキュリティガイドライン
+
+## ⚠️ コミット前の必須セキュリティチェック
+
+**すべてのコミット前に以下を確認すること：**
+
+- [ ] ハードコードされた機密情報がない（APIキー、パスワード、トークン）
+- [ ] すべてのユーザー入力をバリデーション
+- [ ] SQLインジェクション対策（パラメータ化クエリ）
+- [ ] XSS対策（HTMLサニタイゼーション）
+- [ ] CSRF保護が有効
+- [ ] 認証・認可が正しく実装されている
+- [ ] すべてのエンドポイントにレート制限
+- [ ] エラーメッセージに機密情報が含まれていない
+- [ ] ログに機密情報が出力されていない
+- [ ] 依存ライブラリに既知の脆弱性がない
+
+---
+
+## 🔐 機密情報管理
+
+### ❌ 絶対にやってはいけないこと
+
+```typescript
+// ❌ ハードコードされたAPIキー
+const apiKey = "sk-proj-xxxxx"
+const password = "myPassword123"
+const dbConnection = "postgresql://user:pass@localhost/db"
+
+// ❌ コメントに機密情報
+// TODO: Use API key: sk-proj-xxxxx
+
+// ❌ console.logで機密情報を出力
+console.log('User password:', user.password)
+```
+
+### ✅ 正しい実装
+
+```typescript
+// ✅ 環境変数を使用
+const apiKey = process.env.OPENAI_API_KEY
+
+if (!apiKey) {
+  throw new Error('OPENAI_API_KEY not configured')
+}
+
+// ✅ 機密情報はマスク
+console.log('User email:', user.email.replace(/(.{2}).*(@.*)/, '$1***$2'))
+
+// ✅ パスワードはハッシュ化
+import bcrypt from 'bcrypt'
+const hashedPassword = await bcrypt.hash(password, 10)
+```
+
+### 環境変数の設定
+
+```bash
+# .env ファイル（このファイルは .gitignore に追加）
+OPENAI_API_KEY=sk-proj-xxxxx
+DATABASE_URL=postgresql://user:pass@localhost/db
+JWT_SECRET=your-secret-key
+```
+
+```javascript
+// .gitignore に必ず追加
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets/
+```
+
+---
+
+## 🛡️ 入力バリデーション
+
+### すべてのユーザー入力を検証
+
+```typescript
+import { z } from 'zod'
+
+// ✅ Zodスキーマでバリデーション
+const UserSchema = z.object({
+  email: z.string().email('Invalid email format'),
+  age: z.number().int().min(0).max(150),
+  username: z.string().min(3).max(20).regex(/^[a-zA-Z0-9_]+$/)
+})
+
+function createUser(data: unknown) {
+  // バリデーション失敗時は例外をスロー
+  const validated = UserSchema.parse(data)
+  // ...
+}
+```
+
+### SQLインジェクション対策
+
+```typescript
+// ❌ 文字列連結（SQLインジェクションの危険）
+const query = `SELECT * FROM users WHERE email = '${email}'`
+
+// ✅ パラメータ化クエリ
+const query = 'SELECT * FROM users WHERE email = $1'
+const result = await db.query(query, [email])
+
+// ✅ ORMを使用（Prisma, Drizzle等）
+const user = await prisma.user.findUnique({
+  where: { email }
+})
+```
+
+### XSS対策
+
+```typescript
+// ❌ dangerouslySetInnerHTML（XSSの危険）
+<div dangerouslySetInnerHTML={{ __html: userInput }} />
+
+// ✅ テキストとして表示
+<div>{userInput}</div>
+
+// ✅ サニタイゼーション（HTMLが必要な場合のみ）
+import DOMPurify from 'dompurify'
+const cleanHTML = DOMPurify.sanitize(userInput)
+```
+
+---
+
+## 🔒 認証・認可
+
+### JWTトークンの適切な管理
+
+```typescript
+import jwt from 'jsonwebtoken'
+
+// ✅ 安全なJWT生成
+const token = jwt.sign(
+  { userId: user.id },
+  process.env.JWT_SECRET!,
+  { 
+    expiresIn: '1h',  // 短い有効期限
+    algorithm: 'HS256'
+  }
+)
+
+// ✅ トークン検証
+function verifyToken(token: string) {
+  try {
+    return jwt.verify(token, process.env.JWT_SECRET!)
+  } catch (error) {
+    throw new Error('Invalid token')
+  }
+}
+```
+
+### パスワード管理
+
+```typescript
+import bcrypt from 'bcrypt'
+
+// ✅ パスワードのハッシュ化
+async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 10
+  return await bcrypt.hash(password, saltRounds)
+}
+
+// ✅ パスワードの検証
+async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return await bcrypt.compare(password, hash)
+}
+
+// ❌ 絶対にやってはいけない
+// - パスワードを平文で保存
+// - MD5やSHA1でハッシュ化（安全性が低い）
+// - パスワードをログに出力
+```
+
+### 認可チェック
+
+```typescript
+// ✅ すべてのAPIで認可チェック
+async function updateUser(userId: string, data: UserData, currentUser: User) {
+  // 本人確認
+  if (currentUser.id !== userId && !currentUser.isAdmin) {
+    throw new Error('Unauthorized')
+  }
+  
+  // 更新処理
+  return await userService.update(userId, data)
+}
+```
+
+---
+
+## 🚦 レート制限
+
+### API エンドポイントの保護
+
+```typescript
+import rateLimit from 'express-rate-limit'
+
+// ✅ レート制限を設定
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15分
+  max: 100, // 最大100リクエスト
+  message: 'Too many requests, please try again later.'
+})
+
+app.use('/api/', limiter)
+
+// ✅ 認証エンドポイントには厳しい制限
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5, // 15分で5回まで
+  skipSuccessfulRequests: true
+})
+
+app.post('/api/auth/login', authLimiter, loginHandler)
+```
+
+---
+
+## 🔍 エラーハンドリング
+
+### 機密情報を漏らさないエラーメッセージ
+
+```typescript
+// ❌ 詳細なエラーを公開（本番環境）
+catch (error) {
+  // システムの詳細が漏洩
+  res.status(500).json({ error: error.message })
+}
+
+// ✅ 安全なエラーメッセージ
+catch (error) {
+  // ログには詳細を記録
+  logger.error('Database error:', error)
+  
+  // ユーザーには一般的なメッセージ
+  res.status(500).json({ 
+    error: 'An error occurred. Please try again later.' 
+  })
+}
+
+// ✅ カスタムエラークラス
+class AppError extends Error {
+  constructor(
+    public statusCode: number,
+    public message: string,
+    public isOperational = true
+  ) {
+    super(message)
+  }
+}
+
+// ユーザーに返しても安全なエラー
+throw new AppError(400, 'Invalid email format')
+
+// システムエラー（詳細は隠す）
+throw new AppError(500, 'Internal server error', false)
+```
+
+---
+
+## 📝 ログとモニタリング
+
+### 機密情報をログに含めない
+
+```typescript
+// ❌ 機密情報をログ出力
+logger.info('User login:', { 
+  email: user.email, 
+  password: user.password  // 絶対NG
+})
+
+// ✅ 安全なログ
+logger.info('User login:', { 
+  userId: user.id,
+  email: user.email.replace(/(.{2}).*(@.*)/, '$1***$2')
+  // パスワードは絶対にログに含めない
+})
+
+// ✅ 機密データのマスキング
+function maskSensitiveData(obj: any) {
+  const masked = { ...obj }
+  const sensitiveFields = ['password', 'token', 'apiKey', 'secret']
+  
+  sensitiveFields.forEach(field => {
+    if (masked[field]) {
+      masked[field] = '***REDACTED***'
+    }
+  })
+  
+  return masked
+}
+```
+
+---
+
+## 🔧 依存関係の管理
+
+### 脆弱性スキャン
+
+```bash
+# ✅ 定期的に脆弱性をチェック
+npm audit
+
+# 自動修正（可能な場合）
+npm audit fix
+
+# 重大な脆弱性のみ表示
+npm audit --audit-level=high
+
+# ✅ Dependabotを有効化（GitHub）
+# .github/dependabot.yml
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+```
+
+### 信頼できるパッケージのみ使用
+
+```bash
+# パッケージの情報を確認
+npm view <package-name>
+
+# ダウンロード数、最終更新日、メンテナンス状況を確認
+# - 週間ダウンロード数が多い
+# - 定期的に更新されている
+# - GitHubスター数が多い
+# - 既知の脆弱性がない
+```
+
+---
+
+## 🚨 セキュリティインシデント対応プロトコル
+
+### セキュリティ問題を発見した場合
+
+#### 1. 即座に停止 🛑
+- コミット・プッシュを中止
+- 作業を停止
+
+#### 2. security-reviewerエージェントを使用
+```bash
+# セキュリティレビューを実行
+# すべてのCRITICAL問題を特定
+```
+
+#### 3. 重大度の判定
+
+| 重大度 | 対応 | 例 |
+|--------|------|-----|
+| **CRITICAL** | 即座に修正、すべての作業を中断 | 機密情報の漏洩、SQLインジェクション |
+| **HIGH** | 同一PR内で必ず修正 | 認証バイパス、XSS |
+| **MEDIUM** | 可能な限り修正 | レート制限なし、弱いバリデーション |
+| **LOW** | 次回修正を検討 | コードスタイル、軽微な警告 |
+
+#### 4. 機密情報が漏洩した場合
+
+```bash
+# すでにコミットしてしまった場合
+# 1. APIキー/シークレットを即座にローテーション
+# 2. リポジトリ管理者に報告
+# 3. コミット履歴から削除
+
+# まだプッシュしていない場合
+git reset HEAD~1
+# ファイルを修正して再コミット
+
+# すでにプッシュした場合
+# BFG Repo-Cleaner または git filter-branch を使用
+```
+
+#### 5. 類似問題の全体スキャン
+
+```bash
+# コードベース全体で機密情報を検索
+grep -r "sk-proj-" .
+grep -r "password.*=" .
+grep -r "api_key.*=" .
+
+# .envファイルが.gitignoreに含まれているか確認
+git check-ignore .env
+```
+
+---
+
+## 🛡️ セキュリティベストプラクティス
+
+### HTTPS/TLS
+```typescript
+// ✅ 本番環境では必ずHTTPSを使用
+if (process.env.NODE_ENV === 'production' && !req.secure) {
+  return res.redirect('https://' + req.headers.host + req.url)
+}
+```
+
+### CORS設定
+```typescript
+// ❌ すべてのオリジンを許可
+app.use(cors({ origin: '*' }))
+
+// ✅ 特定のオリジンのみ許可
+app.use(cors({ 
+  origin: process.env.ALLOWED_ORIGINS?.split(','),
+  credentials: true
+}))
+```
+
+### セキュリティヘッダー
+```typescript
+import helmet from 'helmet'
+
+// ✅ Helmetでセキュリティヘッダーを設定
+app.use(helmet())
+
+// Content Security Policy
+app.use(helmet.contentSecurityPolicy({
+  directives: {
+    defaultSrc: ["'self'"],
+    scriptSrc: ["'self'", "'unsafe-inline'"],
+  }
+}))
+```
+
+### CSRF保護
+```typescript
+import csrf from 'csurf'
+
+// ✅ CSRFトークンを有効化
+app.use(csrf({ cookie: true }))
+
+app.get('/form', (req, res) => {
+  res.render('form', { csrfToken: req.csrfToken() })
+})
+```
+
+---
+
+## ✅ セキュリティチェックリスト
+
+### コミット前
+- [ ] `git diff` で機密情報がないか確認
+- [ ] `grep -r "password\|secret\|api_key" .` で検索
+- [ ] `.env` ファイルが `.gitignore` に含まれているか確認
+- [ ] すべてのユーザー入力にバリデーション
+- [ ] SQLクエリがパラメータ化されているか
+- [ ] エラーメッセージに機密情報が含まれていないか
+
+### デプロイ前
+- [ ] `npm audit` で脆弱性チェック
+- [ ] すべてのAPIエンドポイントに認証
+- [ ] レート制限が設定されているか
+- [ ] HTTPS/TLSが有効か
+- [ ] セキュリティヘッダーが設定されているか
+- [ ] CORS設定が適切か
+
+### 定期的なチェック
+- [ ] 依存関係の更新（週次）
+- [ ] セキュリティパッチの適用（即時）
+- [ ] アクセスログの監視（日次）
+- [ ] 異常なアクセスパターンの検出
+
+---
+
+## 📚 参考リソース
+
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [Node.js Security Best Practices](https://nodejs.org/en/docs/guides/security/)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)

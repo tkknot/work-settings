@@ -1,0 +1,418 @@
+# Git Workflowガイドライン
+
+## 必須ツール
+
+### GitHub CLIのインストール確認
+GitHub CLI（`gh`）が必要です。未インストールの場合は以下でインストール：
+
+```bash
+# Ubuntu/Debian
+sudo apt update
+sudo apt install gh
+
+# または公式リポジトリから
+curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+sudo apt update
+sudo apt install gh
+
+# 認証
+gh auth login
+```
+
+---
+
+## コミットメッセージフォーマット
+
+### 基本形式
+```
+<type>: <description>
+```
+
+### Type一覧
+| Type | 説明 | 例 |
+|------|------|-----|
+| `feat` | 新機能追加 | `feat: ユーザー検索機能を追加` |
+| `fix` | バグ修正 | `fix: ログイン時のエラーを修正` |
+| `refactor` | リファクタリング | `refactor: UserServiceをクラスに変更` |
+| `docs` | ドキュメント変更 | `docs: READMEにセットアップ手順を追加` |
+| `test` | テスト追加・修正 | `test: UserService単体テストを追加` |
+| `chore` | ビルド・ツール変更 | `chore: ESLint設定を更新` |
+| `perf` | パフォーマンス改善 | `perf: クエリをインデックス化` |
+| `ci` | CI/CD設定変更 | `ci: GitHub Actionsワークフロー追加` |
+
+### コミット例
+```bash
+# 良い例
+git commit -m "feat: セマンティック検索機能を実装"
+
+# 避けるべき例（曖昧）
+git commit -m "update"
+git commit -m "fix bug"
+```
+
+---
+
+## 機能実装ワークフロー
+
+### Phase 1: 計画
+**plannerエージェント**を使用して実装計画を作成：
+
+```markdown
+## 実装計画
+1. 依存関係の特定
+   - 必要なライブラリ
+   - 外部サービス
+   
+2. リスク分析
+   - Redis障害時の対応
+   - API制限への対処
+   
+3. フェーズ分け
+   - Phase 1: ベクトル検索の基本実装
+   - Phase 2: フォールバック機能
+   - Phase 3: パフォーマンス最適化
+```
+
+### Phase 2: TDD（テスト駆動開発）
+**tdd-guideエージェント**を使用してTDDサイクルを実践：
+
+#### 🔴 RED: テストを先に書く
+```typescript
+describe('searchMarketsByVector', () => {
+  it('ベクトル検索で関連マーケットを返す', async () => {
+    const result = await searchMarketsByVector('大統領選挙');
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0]).toHaveProperty('similarity_score');
+  });
+});
+```
+
+#### 🟢 GREEN: テストをパスさせる実装
+```typescript
+export async function searchMarketsByVector(query: string) {
+  const embedding = await generateEmbedding(query);
+  const results = await redisClient.ft.search(/* ... */);
+  return results;
+}
+```
+
+#### 🔵 REFACTOR: リファクタリング
+- コードの重複を削除
+- 命名を改善
+- パフォーマンスを最適化
+
+#### カバレッジ確認
+```bash
+npm run test:coverage
+# 目標: 80%以上のカバレッジ
+```
+
+### Phase 3: コードレビュー
+**code-reviewerエージェント**をコード記述直後に使用：
+
+- **CRITICAL**: 必ず修正（セキュリティ、データ損失リスク）
+- **HIGH**: 修正推奨（バグの可能性が高い）
+- **MEDIUM**: 可能であれば修正（コード品質向上）
+
+---
+
+## ⚠️ コミット前の必須確認事項
+
+### 1. テスト実行
+```bash
+# すべてのテストを実行
+npm test
+
+# 結果: すべてパスすることを確認
+```
+
+### 2. カバレッジ確認
+```bash
+# カバレッジレポートを生成
+npm run test:coverage
+
+# 確認事項:
+# ✓ 行カバレッジ 80%以上
+# ✓ 分岐カバレッジ 80%以上
+# ✓ 関数カバレッジ 80%以上
+```
+
+### 3. Lint実行
+```bash
+# Lintチェック
+npm run lint
+
+# エラーがある場合は修正
+npm run lint -- --fix
+```
+
+### 4. 型チェック（TypeScript）
+```bash
+# 型エラーがないか確認
+npx tsc --noEmit
+
+# すべてのエラーを解消すること
+```
+
+### 5. ビルド確認
+```bash
+# ビルドが成功することを確認
+npm run build
+
+# エラーがないことを確認
+```
+
+### 6. 変更内容の確認
+```bash
+# ステージングされた変更を確認
+git diff --staged
+
+# 意図しない変更が含まれていないか確認
+# - console.log()の削除忘れ
+# - デバッグコードの削除忘れ
+# - コメントアウトされたコード
+```
+
+### ✅ コミット前チェックリスト
+以下をすべて確認してからコミット：
+
+- [ ] `npm test` がすべてパス
+- [ ] `npm run test:coverage` でカバレッジ80%以上
+- [ ] `npm run lint` でエラーなし
+- [ ] `npx tsc --noEmit` で型エラーなし
+- [ ] `npm run build` が成功
+- [ ] `git diff --staged` で意図しない変更がない
+- [ ] デバッグコード（console.log等）を削除
+- [ ] コメントアウトされたコードを削除
+
+### コミット実行
+すべての確認が完了したら：
+
+```bash
+# ステージング
+git add .
+
+# コミットメッセージを入力
+git commit -m "feat: Vector検索によるセマンティック検索を実装"
+```
+
+---
+
+## ⚠️ プッシュ前の必須確認事項
+
+### 1. コミット履歴の確認
+```bash
+# プッシュ前に必ずコミット履歴を確認
+git log --oneline -5
+
+# 確認事項:
+# ✓ コミットメッセージが適切か
+# ✓ 不要なコミットがないか
+# ✓ 機密情報が含まれていないか
+```
+
+### 2. リモートとの差分確認
+```bash
+# リモートの最新を取得
+git fetch origin
+
+# リモートとの差分を確認
+git log origin/main..HEAD --oneline
+```
+
+### 3. コンフリクトの確認
+```bash
+# mainブランチを最新化
+git fetch origin main
+
+# リベース（必要に応じて）
+git rebase origin/main
+
+# コンフリクトがある場合は解決
+```
+
+### 4. 機密情報のチェック
+```bash
+# コミット内容に機密情報がないか確認
+git log -p | grep -i "password\|secret\|api_key\|token"
+
+# もし見つかった場合:
+# 1. git reset でコミットを取り消す
+# 2. 機密情報を削除
+# 3. 再度コミット
+```
+
+### 5. CI/CDの事前確認（ローカル）
+```bash
+# CIで実行されるコマンドをローカルで実行
+npm run lint
+npm test
+npm run build
+
+# すべて成功することを確認
+```
+
+### ✅ プッシュ前チェックリスト
+以下をすべて確認してからプッシュ：
+
+- [ ] `git log --oneline` でコミット履歴を確認
+- [ ] コミットメッセージが規約に従っている
+- [ ] 機密情報（パスワード、APIキー等）が含まれていない
+- [ ] `git fetch origin` でリモートを最新化
+- [ ] リベースでコンフリクトを解決済み
+- [ ] ローカルで `npm test && npm run lint && npm run build` が成功
+- [ ] 不要なファイルが含まれていない
+
+### プッシュ実行
+すべての確認が完了したら：
+
+```bash
+# 初回プッシュ（新しいブランチ）
+git push -u origin feature/your-feature
+
+# 2回目以降
+git push
+```
+
+---
+
+## Pull Requestワークフロー
+
+### 1. ブランチ作成
+```bash
+# 機能ブランチを作成
+git checkout -b feature/semantic-search
+
+# またはバグ修正ブランチ
+git checkout -b fix/login-error
+```
+
+### 2. PR作成前の確認
+**重要**: PRを作成する前に、**すべての**コミット履歴を確認：
+
+```bash
+# ベースブランチとの差分を確認
+git diff main...HEAD
+
+# すべてのコミットログを確認
+git log main..HEAD --oneline
+
+# 変更されたファイル一覧
+git diff --name-status main...HEAD
+```
+
+**注意**: 最新のコミットだけでなく、ブランチ全体の変更を把握すること
+
+### 3. PR作成
+```bash
+# GitHub CLIでPR作成
+gh pr create --title "feat: セマンティック検索機能の実装" \
+  --body "$(cat <<EOF
+## 概要
+Vector検索を使用したセマンティック検索機能を実装しました。
+
+## 変更内容
+- Redis Vector Searchの統合
+- OpenAI Embeddingsによるベクトル化
+- フォールバック機能（Redis障害時は通常検索）
+
+## テストプラン
+- [ ] 単体テスト: カバレッジ80%以上
+- [ ] 統合テスト: Redis接続テスト
+- [ ] E2Eテスト: 検索フローの動作確認
+- [ ] パフォーマンステスト: 1000件データでの応答時間
+
+## 依存関係
+- Redis Stack（Vector Search対応版）
+- OpenAI API
+
+## レビューポイント
+- ベクトル検索のロジック
+- エラーハンドリング
+- フォールバック動作
+EOF
+)"
+```
+
+---
+
+## Git Worktreeの活用
+
+### 複数機能を並行開発
+```bash
+# メインの作業ディレクトリ
+git worktree add ../myproject-feature1 feature/search
+
+# 別の機能を並行開発
+git worktree add ../myproject-feature2 feature/auth
+
+# ホットフィックスも別のworktreeで
+git worktree add ../myproject-hotfix hotfix/critical-bug
+
+# worktree一覧を確認
+git worktree list
+```
+
+### 利点
+- ブランチ切り替え不要
+- ビルド・node_modulesを別々に管理
+- 複数PRのレビューが容易
+
+---
+
+## ベストプラクティス
+
+### コミット粒度
+✅ **良い例**: 1機能1コミット
+```bash
+git commit -m "feat: ベクトル検索APIを追加"
+git commit -m "test: ベクトル検索の単体テストを追加"
+git commit -m "docs: ベクトル検索のREADMEを更新"
+```
+
+❌ **悪い例**: すべてを1つのコミットに
+```bash
+git commit -m "feat: いろいろ実装した"
+```
+
+### ブランチ命名規則
+```bash
+feature/<機能名>     # 新機能
+fix/<バグ内容>       # バグ修正
+refactor/<対象>      # リファクタリング
+docs/<ドキュメント>  # ドキュメント
+test/<テスト対象>    # テスト追加
+```
+
+### PRのサイズ
+- **理想**: 300行以下の変更
+- **最大**: 500行以下
+- 大きすぎる場合は複数のPRに分割
+
+---
+
+## 緊急時の対応
+
+### コミット後に機密情報に気づいた場合
+```bash
+# まだプッシュしていない場合
+git reset HEAD~1  # 直前のコミットを取り消し
+# ファイルを修正して再コミット
+
+# すでにプッシュしてしまった場合
+# 1. リポジトリ管理者に連絡
+# 2. 該当のAPIキー等を即座にローテーション
+# 3. git filter-branch または BFG Repo-Cleaner で履歴から削除
+```
+
+### 間違ったブランチにコミットした場合
+```bash
+# コミットを正しいブランチに移動
+git checkout correct-branch
+git cherry-pick <commit-hash>
+
+# 元のブランチから削除
+git checkout wrong-branch
+git reset --hard HEAD~1
+```
