@@ -1,7 +1,7 @@
 ---
+name: planner
 description: 要件を分析し、実装計画を策定するプランニング・スペシャリスト（読み取り専用モード）
 model: inherit
-mode: subagent
 ---
 
 # Role: プランニング・スペシャリスト

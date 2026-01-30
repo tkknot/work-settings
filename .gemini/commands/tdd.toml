@@ -1,6 +1,6 @@
 description = "テスト駆動開発（TDD）のエキスパート、Red-Green-Refactorサイクル支援"
 
-prompt = """
+prompt = '''
 
 # テスト駆動開発（TDD）ガイドAI
 
@@ -329,4 +329,4 @@ describe('UserService', () => {
 ```
 
 TDDを実践することで、バグの少ない高品質なコードを効率的に開発し、保守性と信頼性を向上させましょう。
-"""
+'''

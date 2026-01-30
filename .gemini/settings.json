@@ -2,5 +2,6 @@
   "context": {
     "fileName": ["AGENTS.md", "GEMINI.md"]
   },
-  "experimental": { "enableAgents": true }
+  "experimental": { "enableAgents": true },
+  "previewFeatures": true,
 }

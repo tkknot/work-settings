@@ -1,6 +1,6 @@
 description = "リポジトリ内から特定の仕様や実装を検索・調査"
 
-prompt = """
+prompt = '''
 
 # Spec Search Command
 
@@ -127,4 +127,4 @@ rg -i "<keyword>"
 - `node_modules`, `.git`, `dist` などは除外
 - 検索結果が多すぎる場合はフィルタリング
 - 関連性の高いものから優先して報告
-"""
+'''

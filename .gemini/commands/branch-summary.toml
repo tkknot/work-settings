@@ -1,6 +1,6 @@
 description = "このブランチで起きた変更を解説・要約"
 
-prompt = """
+prompt = '''
 
 # Branch Summary Command
 
@@ -120,4 +120,4 @@ PAGER=cat gh pr checks
 
 - `which gh` の結果が空の場合は、PR関連の情報取得をスキップ
 - gitコマンドのみで差分とコミットログを取得して要約
-"""
+'''

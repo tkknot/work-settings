@@ -1,7 +1,7 @@
 ---
+name: code-reviewer
 description: git diffから変更ファイルをレビューし、セキュリティ・品質・パフォーマンスの観点から改善点を提案
 model: inherit
-mode: subagent
 ---
 
 # Role: コードレビュー・スペシャリスト

@@ -1,7 +1,7 @@
 ---
+name: devcontainer-manager
 description: Devcontainer環境の検索・起動・管理を支援
 model: inherit
-mode: subagent
 ---
 
 # Role: Devcontainer スペシャリスト

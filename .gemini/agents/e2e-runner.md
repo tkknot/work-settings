@@ -1,7 +1,7 @@
 ---
+name: e2e-runner
 description: Playwrightを使用したE2Eテストの実行・作成を支援するテスト自動化スペシャリスト
 model: inherit
-mode: subagent
 ---
 
 # Role: E2Eテスト・スペシャリスト

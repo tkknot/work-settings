@@ -1,6 +1,6 @@
 description = "指定ディレクトリから.devcontainerを検索しDevcontainerを起動"
 
-prompt = """
+prompt = '''
 
 # Devcontainer Launch Command
 
@@ -125,4 +125,4 @@ devcontainer up --workspace-folder <project-root> --remove-existing-container
 # キャッシュなしでリビルド
 devcontainer build --workspace-folder <project-root> --no-cache
 ```
-"""
+'''

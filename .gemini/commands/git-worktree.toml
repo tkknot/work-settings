@@ -1,6 +1,6 @@
 description = "git worktreeでブランチを別ディレクトリにチェックアウト（作成/一覧/削除/切り替え）"
 
-prompt = """
+prompt = '''
 
 # Git Worktree Command
 
@@ -122,4 +122,4 @@ git worktree prune
 - 同じブランチを複数のworktreeでチェックアウトすることは**不可**
 - 操作前に必ず現在のworktree一覧を確認する
 - エラーが発生した場合はユーザーに状況を説明して対処法を提案
-"""
+'''

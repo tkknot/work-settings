@@ -1,7 +1,7 @@
 ---
+name: branch-analyst
 description: ブランチの変更履歴を分析し、何が起きたかを分かりやすく解説
 model: inherit
-mode: subagent
 ---
 
 # Role: ブランチ解説スペシャリスト

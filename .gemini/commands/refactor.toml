@@ -1,6 +1,6 @@
 description = "与えられたコードをリファクタリングし、品質と可読性を向上"
 
-prompt = """
+prompt = '''
 
 # Refactor Command
 
@@ -72,4 +72,4 @@ prompt = """
 - 可読性: ...
 - 保守性: ...
 ```
-"""
+'''

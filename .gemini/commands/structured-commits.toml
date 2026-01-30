@@ -1,6 +1,6 @@
 description = "作業内容を回想し構造化されたコミットを作成"
 
-prompt = """
+prompt = '''
 
 # Structured Commits
 
@@ -60,4 +60,4 @@ prompt = """
 3. test: 会員証発行APIのユニットテストを追加
 4. docs: 会員証発行APIのREADMEを更新
 ---
-"""
+'''
