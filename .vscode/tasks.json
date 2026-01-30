@@ -1,0 +1,71 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Sync .cursor settings",
+            "type": "shell",
+            "command": "./sync_cursor_settings.sh",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Sync opencode settings",
+            "type": "shell",
+            "command": "./sync_opencode_settings.sh",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Sync nvim settings",
+            "type": "shell",
+            "command": "./sync_nvim_settings.sh",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Sync .gemini settings",
+            "type": "shell",
+            "command": "./sync_gemini_settings.sh",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Copy to base",
+            "type": "shell",
+            "command": "./copy-to-base.sh",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Copy to gemini",
+            "type": "shell",
+            "command": "./copy-to-gemini.sh",
+            "problemMatcher": [],
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        }
+    ]
+}
