@@ -1,0 +1,131 @@
+---
+description: リポジトリ内から特定の仕様や実装を検索・調査
+model: inherit
+subtask: true
+---
+
+# Spec Search Command
+
+リポジトリ内から特定の仕様や機能の実装箇所を検索し、関連するコードとドキュメントを特定します。
+
+## 実行手順
+
+### Phase 1: 検索キーワードの確認
+
+1. ユーザーから検索したい仕様・機能のキーワードを取得
+2. 関連する可能性のあるキーワードを推測してリストアップ
+
+例:
+- 「ログイン機能」→ `login`, `auth`, `session`, `signin`
+- 「決済処理」→ `payment`, `checkout`, `billing`, `stripe`
+
+### Phase 2: コード検索
+
+1. **grep検索でキーワードを探す**
+
+```bash
+# キーワード検索
+rg -i "<keyword>" --type-add 'code:*.{ts,js,py,go,java,rb}' -t code
+
+# 関数・クラス定義を探す
+rg -i "(function|class|def|func).*<keyword>" --type code
+
+# ファイル名で検索
+fd -i "<keyword>"
+```
+
+2. **Git履歴から検索**
+
+```bash
+# コミットメッセージ検索
+git log --oneline --all --grep="<keyword>"
+
+# 変更内容から検索
+git log -p --all -S "<keyword>" --oneline
+
+# ファイル変更履歴
+git log --oneline --all -- "*<keyword>*"
+```
+
+### Phase 3: ドキュメント検索
+
+1. **ドキュメントファイルを検索**
+
+```bash
+# Markdown/テキストファイル
+rg -i "<keyword>" -t md -t txt
+
+# READMEファイル
+rg -i "<keyword>" -g "README*"
+
+# API仕様書
+rg -i "<keyword>" -g "*.yaml" -g "*.json" -g "openapi*"
+```
+
+2. **コメント・ドキュメンテーション**
+
+```bash
+# JSDoc/docstring検索
+rg -i "@.*<keyword>|\"\"\".*<keyword>"
+```
+
+### Phase 4: 関連ファイルの分析
+
+1. 発見したファイルの依存関係を確認
+2. import/require文から関連ファイルを特定
+3. 呼び出し元・呼び出し先を追跡
+
+```bash
+# importを検索
+rg "import.*from.*<file>" 
+rg "require\(.*<file>\)"
+```
+
+### Phase 5: 結果まとめ
+
+以下の形式で結果を報告:
+
+```markdown
+## 🔍 検索結果: "<keyword>"
+
+### 📁 関連ファイル
+| ファイル | 種別 | 説明 |
+|---------|------|------|
+| `path/to/file.ts` | 実装 | メイン処理 |
+| `path/to/test.ts` | テスト | ユニットテスト |
+| `docs/spec.md` | ドキュメント | 仕様書 |
+
+### 📝 主要な実装箇所
+- `file.ts:123` - 関数名: `processPayment()`
+- `file.ts:456` - クラス: `PaymentService`
+
+### 📚 関連ドキュメント
+- `docs/payment.md` - 決済フローの説明
+- `README.md` - セットアップ手順
+
+### 🔗 関連コミット
+- `abc1234` - feat: 決済機能を追加
+- `def5678` - fix: 決済エラーハンドリング
+```
+
+## 便利なオプション
+
+```bash
+# ファイルタイプ指定
+rg "<keyword>" -t ts -t js
+
+# 除外パターン
+rg "<keyword>" -g "!node_modules" -g "!dist"
+
+# コンテキスト表示（前後3行）
+rg "<keyword>" -C 3
+
+# 大文字小文字区別なし
+rg -i "<keyword>"
+```
+
+## 注意事項
+
+- `node_modules`, `.git`, `dist` などは除外
+- 検索結果が多すぎる場合はフィルタリング
+- 関連性の高いものから優先して報告
