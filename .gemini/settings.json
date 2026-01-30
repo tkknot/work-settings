@@ -3,5 +3,12 @@
     "fileName": ["AGENTS.md", "GEMINI.md"]
   },
   "experimental": { "enableAgents": true },
-  "previewFeatures": true
+  "security": {
+    "auth": {
+      "selectedType": "oauth-personal"
+    }
+  },
+  "general": {
+    "previewFeatures": true
+  }
 }
