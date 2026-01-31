@@ -32,7 +32,8 @@ vim.opt.showmatch = true -- 括弧入力時の対応する括弧を表示
 vim.opt.laststatus = 3 -- グローバルステータスラインを使用（Neovim推奨）
 
 -- 分割とバッファ
-vim.opt.splitbelow = true
+vim.opt.splitbelow = true -- 水平分割時に下に開く
+vim.opt.splitright = true -- 垂直分割時に右に開く
 vim.opt.hidden = true -- バッファが編集中でもその他のファイルを開けるように
 
 -- クリップボード

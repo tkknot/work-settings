@@ -46,9 +46,9 @@
             }
         },
         {
-            "label": "Copy to base",
+            "label": "Copy to ai-setting-base",
             "type": "shell",
-            "command": "./copy-to-base.sh",
+            "command": "./copy-to-ai-setting-base.sh",
             "problemMatcher": [],
             "group": "none",
             "presentation": {
