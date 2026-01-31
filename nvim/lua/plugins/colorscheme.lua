@@ -4,6 +4,13 @@ return {
     "folke/tokyonight.nvim",
     lazy = false,
     priority = 1000,
+    opts = {
+      transparent = true,
+      styles = {
+        sidebars = "transparent",
+        floats = "transparent",
+      },
+    },
   },
 
   -- Catppuccin (人気のパステルカラーテーマ)
@@ -12,6 +19,9 @@ return {
     name = "catppuccin",
     lazy = false,
     priority = 999,
+    opts = {
+      transparent_background = true,
+    },
   },
 
   -- Kanagawa (日本の伝統色ベース)
@@ -19,6 +29,9 @@ return {
     "rebelot/kanagawa.nvim",
     lazy = false,
     priority = 999,
+    opts = {
+      transparent = true,
+    },
   },
 
   -- Rose Pine (落ち着いた配色)
@@ -27,6 +40,11 @@ return {
     name = "rose-pine",
     lazy = false,
     priority = 999,
+    opts = {
+      styles = {
+        transparency = true,
+      },
+    },
   },
 
   -- Gruvbox (クラシックな人気テーマ)
@@ -34,6 +52,9 @@ return {
     "ellisonleao/gruvbox.nvim",
     lazy = false,
     priority = 999,
+    opts = {
+      transparent_mode = true,
+    },
   },
 
   -- Nord (北欧系の配色)
@@ -41,6 +62,9 @@ return {
     "shaunsingh/nord.nvim",
     lazy = false,
     priority = 999,
+    init = function()
+      vim.g.nord_disable_background = true
+    end,
   },
 
   -- Nightfox (複数のバリエーション)
@@ -48,6 +72,11 @@ return {
     "EdenEast/nightfox.nvim",
     lazy = false,
     priority = 999,
+    opts = {
+      options = {
+        transparent = true,
+      },
+    },
   },
 
   -- Dracula (人気のダークテーマ)
@@ -55,6 +84,9 @@ return {
     "Mofiqul/dracula.nvim",
     lazy = false,
     priority = 999,
+    opts = {
+      transparent_bg = true,
+    },
   },
 
   -- LazyVimのデフォルトカラースキーム設定を無効化
