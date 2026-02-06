@@ -14,10 +14,20 @@ return {
       picker = {
         sources = {
           explorer = {
-            hidden = true, -- デフォルトで隠しファイルを表示
+            hidden = true,
+            ignored = true,
+            -- explorerでは何も除外しない（すべて表示）
+            exclude = {},
           },
           files = {
-            hidden = true, -- ファイル検索でも隠しファイルを表示
+            hidden = true,
+            ignored = false,
+            exclude = { "node_modules", ".git" },
+          },
+          grep = {
+            hidden = true,
+            ignored = false,
+            exclude = { "node_modules", ".git" },
           },
         },
       },
@@ -26,18 +36,11 @@ return {
       { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep (Root Dir)" },
       { "<leader>sg", function() Snacks.picker.grep() end, desc = "Grep (Root Dir)" },
       { "<leader>sw", function() Snacks.picker.grep_word() end, desc = "Visual selection or word", mode = { "n", "x" } },
+      { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
     },
   },
   {
     "nvim-neo-tree/neo-tree.nvim",
-    opts = {
-      filesystem = {
-        filtered_items = {
-          visible = true, -- 隠しファイルを表示
-          hide_dotfiles = false,
-          hide_gitignored = false,
-        },
-      },
-    },
+    enabled = false,
   },
 }
