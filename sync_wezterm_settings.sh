@@ -24,6 +24,10 @@ if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
   mkdir -p "/mnt/c/Users/$WINDOWS_USER/.config"
   
   rsync -av --delete --exclude='.git' "$SOURCE_DIR/" "$WINDOWS_DEST_DIR/"
+  
+  # Also copy to %USERPROFILE%\.wezterm.lua for maximum compatibility
+  cp "$SOURCE_DIR/wezterm.lua" "/mnt/c/Users/$WINDOWS_USER/.wezterm.lua"
+  echo "Synced to /mnt/c/Users/$WINDOWS_USER/.wezterm.lua"
 fi
 
 echo "Done!"

@@ -46,24 +46,41 @@ config.front_end = "WebGpu"
 config.scrollback_lines = 10000
 -- 日本語入力（IME）を有効にする
 config.use_ime = true
--- タブやウィンドウを閉じる際の確認をしない
-config.window_close_confirmation = 'NeverPrompt'
 
 -- --- キーバインド設定 ---
 config.keys = {
-  {
-    key = 'E',
-    mods = 'CTRL|SHIFT',
-    action = wezterm.action.PromptInputLine {
-      description = 'Enter new tab title',
-      action = wezterm.action_callback(function(window, _, line)
-        if line then
-          window:active_tab():set_title(line)
-        end
-      end),
-    },
-  },
+	{
+		key = "E",
+		mods = "CTRL|SHIFT",
+		action = wezterm.action.PromptInputLine({
+			description = "Enter new tab title",
+			action = wezterm.action_callback(function(window, _, line)
+				if line then
+					window:active_tab():set_title(line)
+				end
+			end),
+		}),
+	},
 }
+
+-- macOS向けにCMD+Tも同様に設定
+if wezterm.target_triple:find("darwin") then
+	table.insert(config.keys, {
+		key = "t",
+		mods = "CMD",
+		action = wezterm.action.PromptInputLine({
+			description = "Enter new tab title",
+			action = wezterm.action_callback(function(window, pane, line)
+				if line then
+					local tab, _ = window:mux_window():spawn_tab({
+						cwd = "~",
+					})
+					tab:set_title(line)
+				end
+			end),
+		}),
+	})
+end
 
 -- --- イベントハンドラ ---
 -- 設定がリロードされた時にログ（Ctrl+Shift+Lで表示）を出力する
@@ -72,4 +89,3 @@ wezterm.on("window-config-reloaded", function(window, _)
 end)
 
 return config
-
