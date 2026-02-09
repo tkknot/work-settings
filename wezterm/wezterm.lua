@@ -9,8 +9,12 @@ end
 -- --- 外観の設定 ---
 -- カラースキーム（Tokyo Night）
 config.color_scheme = "Tokyo Night"
--- フォントの設定（Hack Nerd Font）
-config.font = wezterm.font("Hack Nerd Font")
+-- フォントの設定（Hack Nerd Font をベースに、日本語フォントをフォールバックに指定）
+config.font = wezterm.font_with_fallback({
+	"Hack Nerd Font",
+	"Hiragino Sans", -- macOS
+	"Meiryo", -- Windows
+})
 -- フォントサイズ
 config.font_size = 12.0
 -- 背景の不透明度（0.85 = 85%）
@@ -37,6 +41,8 @@ if wezterm.target_triple:find("windows") then
 elseif wezterm.target_triple:find("darwin") then
 	-- macOSの場合：背景のぼかし強度を設定
 	config.macos_window_background_blur = 20
+	-- フォントサイズを大きくする
+	config.font_size = 16.0
 end
 
 -- --- パフォーマンスと動作の設定 ---
