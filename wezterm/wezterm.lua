@@ -11,9 +11,10 @@ end
 config.color_scheme = "Tokyo Night"
 -- フォントの設定（Hack Nerd Font をベースに、日本語フォントをフォールバックに指定）
 config.font = wezterm.font_with_fallback({
-	"Hack Nerd Font",
-	"Hiragino Sans", -- macOS
-	"Meiryo", -- Windows
+	{ family = "Hack Nerd Font" },
+	{ family = "Hiragino Sans", weight = "Regular" },
+	{ family = "Hiragino Kaku Gothic ProN", weight = "Regular" },
+	{ family = "Meiryo" },
 })
 -- フォントサイズ
 config.font_size = 12.0
