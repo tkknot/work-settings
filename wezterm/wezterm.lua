@@ -40,8 +40,6 @@ if wezterm.target_triple:find("windows") then
 	-- Windowsの場合：デフォルトでWSL2のUbuntu-24.04を起動する
 	config.default_domain = "WSL:Ubuntu-24.04"
 elseif wezterm.target_triple:find("darwin") then
-	-- macOSの場合：背景のぼかし強度を設定
-	config.macos_window_background_blur = 20
 	-- フォントサイズを大きくする
 	config.font_size = 16.0
 end

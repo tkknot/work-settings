@@ -3,6 +3,14 @@ return {
   {
     "folke/snacks.nvim",
     opts = {
+      terminal = {
+        win = {
+          style = "terminal",
+          wo = {
+            winblend = 0,
+          },
+        },
+      },
       dashboard = {
         sections = {
           { section = "header" },

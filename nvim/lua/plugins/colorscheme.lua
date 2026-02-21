@@ -13,17 +13,6 @@ return {
     },
   },
 
-  -- Catppuccin (人気のパステルカラーテーマ)
-  {
-    "catppuccin/nvim",
-    name = "catppuccin",
-    lazy = false,
-    priority = 999,
-    opts = {
-      transparent_background = true,
-    },
-  },
-
   -- Kanagawa (日本の伝統色ベース)
   {
     "rebelot/kanagawa.nvim",
@@ -31,19 +20,6 @@ return {
     priority = 999,
     opts = {
       transparent = true,
-    },
-  },
-
-  -- Rose Pine (落ち着いた配色)
-  {
-    "rose-pine/neovim",
-    name = "rose-pine",
-    lazy = false,
-    priority = 999,
-    opts = {
-      styles = {
-        transparency = true,
-      },
     },
   },
 
@@ -79,16 +55,6 @@ return {
     },
   },
 
-  -- Dracula (人気のダークテーマ)
-  {
-    "Mofiqul/dracula.nvim",
-    lazy = false,
-    priority = 999,
-    opts = {
-      transparent_bg = true,
-    },
-  },
-
   -- LazyVimのデフォルトカラースキーム設定を無効化
   {
     "LazyVim/LazyVim",
@@ -100,23 +66,15 @@ return {
           "tokyonight-night",
           "tokyonight-storm",
           "tokyonight-moon",
-          "catppuccin",
-          "catppuccin-mocha",
-          "catppuccin-macchiato",
-          "catppuccin-latte",
           "kanagawa",
           "kanagawa-wave",
           "kanagawa-dragon",
-          "rose-pine",
-          "rose-pine-moon",
-          "rose-pine-dawn",
           "gruvbox",
           "nord",
           "nightfox",
           "duskfox",
           "nordfox",
           "carbonfox",
-          "dracula",
         }
         
         -- ランダムシードを設定
@@ -126,6 +84,11 @@ return {
         local selected_scheme = colorschemes[math.random(#colorschemes)]
         vim.cmd.colorscheme(selected_scheme)
         vim.notify("🎨 Theme: " .. selected_scheme, vim.log.levels.INFO)
+
+        -- ターミナル背景を透明にするためのハイライト設定を追加
+        vim.api.nvim_set_hl(0, "Terminal", { link = "Normal" })
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+        vim.api.nvim_set_hl(0, "FloatBorder", { bg = "none" })
       end,
     },
   },
