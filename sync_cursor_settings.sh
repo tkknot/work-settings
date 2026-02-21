@@ -25,4 +25,14 @@ for dir in "${TARGET_DIRS[@]}"; do
     fi
 done
 
-echo "Sync complete!"
+echo "Cursor sync complete!"
+
+# Sync .ai settings
+AI_SOURCE_DIR="./.ai"
+AI_DEST_DIR="$HOME/.ai"
+
+echo ""
+echo "Starting sync from $AI_SOURCE_DIR to $AI_DEST_DIR..."
+mkdir -p "$AI_DEST_DIR"
+rsync -av --delete "$AI_SOURCE_DIR/" "$AI_DEST_DIR/"
+echo ".ai sync complete!"
