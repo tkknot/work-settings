@@ -37,11 +37,11 @@ if [ -f "$AI_DEST_DIR/AGENTS.md" ]; then
     ln -s "$AI_DEST_DIR/AGENTS.md" "$DEST_DIR/CLAUDE.md"
 fi
 
-# Symlink mcp.json -> .mcp.json
+# Symlink mcp.json -> ~/.claude.json
 if [ -f "$AI_DEST_DIR/mcp.json" ]; then
-    rm -f "$DEST_DIR/.mcp.json"
-    echo "Creating symlink: $DEST_DIR/.mcp.json -> $AI_DEST_DIR/mcp.json"
-    ln -s "$AI_DEST_DIR/mcp.json" "$DEST_DIR/.mcp.json"
+    rm -f "$HOME/.claude.json"
+    echo "Creating symlink: $HOME/.claude.json -> $AI_DEST_DIR/mcp.json"
+    ln -s "$AI_DEST_DIR/mcp.json" "$HOME/.claude.json"
 fi
 
 # Symlink playwright-config.json -> playwright-config.json

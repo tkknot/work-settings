@@ -25,12 +25,12 @@ vim.keymap.set("v", "<leader>c", "gc", { remap = true, desc = "Toggle comment" }
 
 -- terminal toggle
 vim.keymap.set("n", "<C-/>", function()
-  Snacks.terminal(nil, { win = { position = "right", width = 0.4 } })
-end, { desc = "Terminal (Right)" })
+  Snacks.terminal(nil, { win = { position = "bottom", height = 0.3 } })
+end, { desc = "Terminal (Bottom)" })
 
 vim.keymap.set("n", "<C-_>", function()
-  Snacks.terminal(nil, { win = { position = "right", width = 0.4 } })
-end, { desc = "Terminal (Right)" })
+  Snacks.terminal(nil, { win = { position = "bottom", height = 0.3 } })
+end, { desc = "Terminal (Bottom)" })
 
 -- Lazygit
 vim.keymap.set("n", "<leader>gg", function()
