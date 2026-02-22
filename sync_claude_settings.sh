@@ -51,5 +51,12 @@ if [ -f "$AI_DEST_DIR/playwright-config.json" ]; then
     ln -s "$AI_DEST_DIR/playwright-config.json" "$DEST_DIR/playwright-config.json"
 fi
 
+# Copy settings.json from .claude/
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
+    echo "Copying settings.json -> $DEST_DIR/settings.json"
+    cp "$SCRIPT_DIR/.claude/settings.json" "$DEST_DIR/settings.json"
+fi
+
 echo ""
 echo "Claude sync complete!"
