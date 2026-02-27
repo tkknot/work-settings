@@ -23,58 +23,14 @@ return {
     },
   },
 
-  -- Gruvbox (クラシックな人気テーマ)
-  {
-    "ellisonleao/gruvbox.nvim",
-    lazy = false,
-    priority = 999,
-    opts = {
-      transparent_mode = true,
-    },
-  },
-
-  -- Nord (北欧系の配色)
-  {
-    "shaunsingh/nord.nvim",
-    lazy = false,
-    priority = 999,
-    init = function()
-      vim.g.nord_disable_background = true
-    end,
-  },
-
-  -- Nightfox (複数のバリエーション)
-  {
-    "EdenEast/nightfox.nvim",
-    lazy = false,
-    priority = 999,
-    opts = {
-      options = {
-        transparent = true,
-      },
-    },
-  },
-
   -- LazyVimのデフォルトカラースキーム設定を無効化
   {
     "LazyVim/LazyVim",
     opts = {
       colorscheme = function()
-        -- 人気のカラーテーマリスト
         local colorschemes = {
           "tokyonight",
-          "tokyonight-night",
-          "tokyonight-storm",
-          "tokyonight-moon",
           "kanagawa",
-          "kanagawa-wave",
-          "kanagawa-dragon",
-          "gruvbox",
-          "nord",
-          "nightfox",
-          "duskfox",
-          "nordfox",
-          "carbonfox",
         }
         
         -- ランダムシードを設定
