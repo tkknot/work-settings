@@ -23,6 +23,9 @@
 | `devenv--` | 開発環境 | devcontainer | `devenv--devcontainer-manager.md` |
 | `docs--` | ドキュメント | ドキュメント更新 | `docs--update-docs-command.md` |
 | `research--` | 調査 | 仕様検索, コード調査 | `research--spec-researcher.md` |
+| `spec--` | 要件/仕様 | 要件定義, 仕様レビュー, Backlog連携 | `spec--requirements-reviewer.md` |
+| `debug--` | バグ調査 | 根本原因分析, 再現テスト, 修正提案 | `debug--bug-investigator.md` |
+| `agent--` | エージェント管理 | 協調パターン, 出力標準, 自己診断 | `agent--coordination-patterns` |
 
 ## ルール
 
