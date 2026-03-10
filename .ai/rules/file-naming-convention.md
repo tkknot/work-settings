@@ -26,6 +26,7 @@
 | `spec--` | 要件/仕様 | 要件定義, 仕様レビュー, Backlog連携 | `spec--requirements-reviewer.md` |
 | `debug--` | バグ調査 | 根本原因分析, 再現テスト, 修正提案 | `debug--bug-investigator.md` |
 | `agent--` | エージェント管理 | 協調パターン, 出力標準, 自己診断 | `agent--coordination-patterns` |
+| `format--` | フォーマット変換 | テキスト整形, 記法変換, フォーマット統一 | `format--backlog-notation-command.md` |
 
 ## ルール
 
