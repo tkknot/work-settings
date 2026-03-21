@@ -1,6 +1,7 @@
 return {
   {
     "coder/claudecode.nvim",
+    lazy = false,
     dependencies = { "folke/snacks.nvim" },
     opts = {
       terminal = {
