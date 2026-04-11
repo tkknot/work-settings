@@ -5,6 +5,10 @@
 
 AI_DEST_DIR="$HOME/.ai"
 DEST_DIR="$HOME/.claude"
+
+# Claude Codeが参照するディレクトリ群
+# ~/.claude/{agents,commands,rules,skills} -> ~/.ai/ のシンボリックリンクにして
+# Claude CodeとCursorで同じ定義を共有する
 TARGET_DIRS=("agents" "commands" "rules" "skills")
 
 # Sync .ai if not already done
@@ -30,28 +34,24 @@ for dir in "${TARGET_DIRS[@]}"; do
     fi
 done
 
-# Symlink CLAUDE.md -> AGENTS.md
-if [ -f "$AI_DEST_DIR/AGENTS.md" ]; then
-    rm -f "$DEST_DIR/CLAUDE.md"
-    echo "Creating symlink: $DEST_DIR/CLAUDE.md -> $AI_DEST_DIR/AGENTS.md"
-    ln -s "$AI_DEST_DIR/AGENTS.md" "$DEST_DIR/CLAUDE.md"
-fi
-
-# Symlink mcp.json -> ~/.claude.json
+# MCPサーバー設定: ~/.claude.json -> ~/.ai/mcp.json
+# Claude Codeが起動時に読み込むMCPサーバーの接続先定義
 if [ -f "$AI_DEST_DIR/mcp.json" ]; then
     rm -f "$HOME/.claude.json"
     echo "Creating symlink: $HOME/.claude.json -> $AI_DEST_DIR/mcp.json"
     ln -s "$AI_DEST_DIR/mcp.json" "$HOME/.claude.json"
 fi
 
-# Symlink playwright-config.json -> playwright-config.json
+# Playwright MCP設定: ~/.claude/playwright-config.json -> ~/.ai/playwright-config.json
+# Playwright MCPサーバーが参照するブラウザ設定
 if [ -f "$AI_DEST_DIR/playwright-config.json" ]; then
     rm -f "$DEST_DIR/playwright-config.json"
     echo "Creating symlink: $DEST_DIR/playwright-config.json -> $AI_DEST_DIR/playwright-config.json"
     ln -s "$AI_DEST_DIR/playwright-config.json" "$DEST_DIR/playwright-config.json"
 fi
 
-# Copy settings.json from .claude/
+# Claude Code設定: settings.json をコピー（シンボリックリンクではなくコピー）
+# 言語設定、実験的機能フラグなどのClaude Code固有設定
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
     echo "Copying settings.json -> $DEST_DIR/settings.json"
