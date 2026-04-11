@@ -30,13 +30,6 @@ for dir in "${TARGET_DIRS[@]}"; do
     fi
 done
 
-# Symlink CLAUDE.md -> AGENTS.md
-if [ -f "$AI_DEST_DIR/AGENTS.md" ]; then
-    rm -f "$DEST_DIR/CLAUDE.md"
-    echo "Creating symlink: $DEST_DIR/CLAUDE.md -> $AI_DEST_DIR/AGENTS.md"
-    ln -s "$AI_DEST_DIR/AGENTS.md" "$DEST_DIR/CLAUDE.md"
-fi
-
 # Symlink mcp.json -> ~/.claude.json
 if [ -f "$AI_DEST_DIR/mcp.json" ]; then
     rm -f "$HOME/.claude.json"
