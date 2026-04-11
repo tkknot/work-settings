@@ -13,6 +13,10 @@ echo ".ai sync complete!"
 
 # Step 2: Create symlinks in ~/.cursor pointing to ~/.ai
 DEST_DIR="$HOME/.cursor"
+
+# Cursorが参照するディレクトリ群
+# ~/.cursor/{agents,commands,rules,skills} -> ~/.ai/ のシンボリックリンクにして
+# CursorとClaude Codeで同じ定義を共有する
 TARGET_DIRS=("agents" "commands" "rules" "skills")
 
 echo ""
@@ -33,35 +37,32 @@ for dir in "${TARGET_DIRS[@]}"; do
     fi
 done
 
-# Symlink AGENTS.md
-if [ -f "$AI_DEST_DIR/AGENTS.md" ]; then
-    rm -f "$DEST_DIR/AGENTS.md"
-    echo "Creating symlink: $DEST_DIR/AGENTS.md -> $AI_DEST_DIR/AGENTS.md"
-    ln -s "$AI_DEST_DIR/AGENTS.md" "$DEST_DIR/AGENTS.md"
-fi
-
-# Symlink mcp.json
+# MCPサーバー設定: ~/.cursor/mcp.json -> ~/.ai/mcp.json
+# Cursorが起動時に読み込むMCPサーバーの接続先定義
 if [ -f "$AI_DEST_DIR/mcp.json" ]; then
     rm -f "$DEST_DIR/mcp.json"
     echo "Creating symlink: $DEST_DIR/mcp.json -> $AI_DEST_DIR/mcp.json"
     ln -s "$AI_DEST_DIR/mcp.json" "$DEST_DIR/mcp.json"
 fi
 
-# Symlink playwright-config.json
+# Playwright MCP設定: ~/.cursor/playwright-config.json -> ~/.ai/playwright-config.json
+# Playwright MCPサーバーが参照するブラウザ設定
 if [ -f "$AI_DEST_DIR/playwright-config.json" ]; then
     rm -f "$DEST_DIR/playwright-config.json"
     echo "Creating symlink: $DEST_DIR/playwright-config.json -> $AI_DEST_DIR/playwright-config.json"
     ln -s "$AI_DEST_DIR/playwright-config.json" "$DEST_DIR/playwright-config.json"
 fi
 
-# Symlink .cursorignore
+# Cursorの除外設定: ~/.cursor/.cursorignore -> ~/.ai/.cursorignore
+# Cursorが無視するファイルパターン（ロックファイル、バイナリ等）
 if [ -f "$AI_DEST_DIR/.cursorignore" ]; then
     rm -f "$DEST_DIR/.cursorignore"
     echo "Creating symlink: $DEST_DIR/.cursorignore -> $AI_DEST_DIR/.cursorignore"
     ln -s "$AI_DEST_DIR/.cursorignore" "$DEST_DIR/.cursorignore"
 fi
 
-# Symlink .cursorindexignore
+# Cursorのインデックス除外設定: ~/.cursor/.cursorindexignore -> ~/.ai/.cursorindexignore
+# Cursorの検索インデックスから除外するファイルパターン
 if [ -f "$AI_DEST_DIR/.cursorindexignore" ]; then
     rm -f "$DEST_DIR/.cursorindexignore"
     echo "Creating symlink: $DEST_DIR/.cursorindexignore -> $AI_DEST_DIR/.cursorindexignore"
