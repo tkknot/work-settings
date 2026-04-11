@@ -1,37 +1,37 @@
-# Agent Guidelines
+# エージェントガイドライン
 
-Think in English, Answer in Japanese.
+英語で思考し、日本語で回答すること。
 
-## Subagent Usage
+## サブエージェントの活用
 
-- Use subagents whenever possible.
-- Keep the main context window clean by delegating research, exploration, and parallel analysis to subagents.
-- For complex problems, parallelize across multiple subagents. One task per subagent is the default.
+- 可能な限りサブエージェントを使用する。
+- メインのコンテキストウィンドウをクリーンに保つため、調査・探索・並列分析はサブエージェントに委譲する。
+- 複雑な問題では複数のサブエージェントを並列化する。1タスク1サブエージェントが基本。
 
-## Problem Solving
+## 問題解決
 
-- Stop and re-plan immediately when something goes wrong.
-- Before completing a task, self-review your work.
+- 何かうまくいかない場合は、すぐに立ち止まって再計画する。
+- タスク完了前に、自分の成果をセルフレビューする。
 
-## Error Handling & Recovery
+## エラー処理とリカバリ
 
-- Diagnose the root cause before retrying any failed operation. Never retry blindly.
-- When uncertain, ask clarifying questions rather than proceeding with assumptions.
-- For logic errors, change the approach. For transient errors (network, file locks), retry.
+- 失敗した操作をリトライする前に、根本原因を診断する。盲目的にリトライしない。
+- 不明な点がある場合は、仮定で進めるのではなく、明確化のための質問をする。
+- ロジックエラーにはアプローチを変更する。一時的なエラー（ネットワーク、ファイルロック）にはリトライする。
 
-## Continuous Improvement
+## 継続的改善
 
-- When an agent exhibits incorrect behavior, update this AGENTS.md to prevent recurrence.
-- If the issue warrants reusable guardrails, create dedicated skills, agents, or commands under `~/.ai/` and report the created paths to the user.
-- Treat every behavioral mistake as a learning opportunity: diagnose the root cause, codify the fix, and verify it addresses the original issue.
+- エージェントが誤った動作をした場合、再発防止のためにこのAGENTS.mdを更新する。
+- 再利用可能なガードレールが必要な場合は、`~/.ai/` 配下に専用のスキル・エージェント・コマンドを作成し、作成パスをユーザーに報告する。
+- すべての動作ミスを学習機会として扱う：根本原因を診断し、修正を体系化し、元の問題に対処できることを検証する。
 
-## Human-in-the-Loop
+## ヒューマン・イン・ザ・ループ
 
-- At the end of your response, clearly list any decisions or trade-offs that require human judgment.
+- レスポンスの最後に、人間の判断が必要な決定やトレードオフを明確にリストする。
 
 ---
 
-## Repository: work-settings
+## リポジトリ: work-settings
 
 開発ツールの設定を一元管理するdotfilesリポジトリ。
 
@@ -43,7 +43,6 @@ Think in English, Answer in Japanese.
 | `.claude/` | Claude Code固有の設定（settings.json） |
 | `nvim/` | Neovim設定（LazyVimベース） |
 | `wezterm/` | WezTerm設定 |
-| `git/` | グローバルgit設定 |
 | `sync_*_settings.sh` | 各ツールの設定をホームディレクトリに配布するスクリプト |
 
 ### `.ai/` のファイル命名規則
