@@ -89,7 +89,7 @@ jobs:
 
             ## Notes
             - 本 PR は `distribute-settings.yml` ワークフローにより自動生成されました。
-            - `.cursor/` `.claude/` 配下は `rsync --delete` により work-settings の内容に完全同期されます。
+            - work-settings が管理するファイルのみ配布（上書き）します。配布先リポジトリ独自のファイルは残ります。
           draft: ${{ inputs.pr_draft }}
           labels: |
             chore
