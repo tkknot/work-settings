@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       target_repo:
-        description: 'Target repository (owner/repo). Must be listed in ALLOWED_REPOS.'
+        description: 'Target repository (owner/repo).'
         required: true
         type: string
       target_base_branch:
@@ -25,32 +25,11 @@ concurrency:
   group: distribute-${{ inputs.target_repo }}
   cancel-in-progress: false
 
-env:
-  ALLOWED_REPOS: ${{ vars.ALLOWED_REPOS }}
-
 jobs:
   distribute:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Validate target repo against allowlist
-        env:
-          TARGET: ${{ inputs.target_repo }}
-        run: |
-          set -euo pipefail
-          if [ -z "${ALLOWED_REPOS:-}" ]; then
-            echo "::error::ALLOWED_REPOS variable is not configured. Set repository or organization variable 'ALLOWED_REPOS'."
-            exit 1
-          fi
-          for allowed in $ALLOWED_REPOS; do
-            if [ "$allowed" = "$TARGET" ]; then
-              echo "Target $TARGET is in allowlist."
-              exit 0
-            fi
-          done
-          echo "::error::Target repo '$TARGET' is not in ALLOWED_REPOS"
-          exit 1
-
       - name: Checkout source (work-settings)
         uses: actions/checkout@v4
         with:
