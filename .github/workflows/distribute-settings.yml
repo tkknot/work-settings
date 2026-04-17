@@ -1,57 +1,129 @@
-name: Distribute settings to target repository
+name: Distribute settings to all tkknot repositories
 
 on:
+  push:
+    branches:
+      - main
+      - master
+    paths:
+      - 'AGENTS.md'
+      - '.ai/**'
+      - '.claude/settings.json'
+      - '.github/workflows/distribute-settings.yml'
+      - '.github/workflows/scripts/**'
   workflow_dispatch:
-    inputs:
-      target_repo:
-        description: 'Target repository (owner/repo).'
-        required: true
-        type: string
-      target_base_branch:
-        description: 'Base branch in the target repo to PR against'
-        required: false
-        default: 'main'
-        type: string
-      pr_draft:
-        description: 'Open the PR as draft instead of ready-for-review'
-        required: false
-        default: false
-        type: boolean
 
 permissions:
   contents: read
 
 concurrency:
-  group: distribute-${{ inputs.target_repo }}
+  group: distribute-settings
   cancel-in-progress: false
 
 jobs:
-  distribute:
+  discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 5
+    outputs:
+      repos: ${{ steps.list.outputs.repos }}
+    steps:
+      - name: List tkknot repositories (non-archived, non-fork, excluding self)
+        id: list
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIBUTION_PAT }}
+        run: |
+          set -euo pipefail
+          repos=$(gh repo list tkknot \
+            --limit 1000 \
+            --no-archived \
+            --source \
+            --json nameWithOwner \
+            -q '[.[].nameWithOwner | select(. != "tkknot/work-settings")]')
+          echo "repos=$repos" >> "$GITHUB_OUTPUT"
+          echo "$repos" | jq -r '.[]' | sed 's/^/ - /'
+
+  distribute:
+    needs: discover
+    if: needs.discover.outputs.repos != '[]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        repo: ${{ fromJson(needs.discover.outputs.repos) }}
+    concurrency:
+      group: distribute-${{ matrix.repo }}
+      cancel-in-progress: false
     steps:
       - name: Checkout source (work-settings)
         uses: actions/checkout@v4
         with:
           path: source
 
+      - name: Resolve target base branch (main, fallback master)
+        id: base
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIBUTION_PAT }}
+        run: |
+          set -euo pipefail
+          if gh api "repos/${{ matrix.repo }}/branches/main" --silent >/dev/null 2>&1; then
+            echo "branch=main" >> "$GITHUB_OUTPUT"
+          elif gh api "repos/${{ matrix.repo }}/branches/master" --silent >/dev/null 2>&1; then
+            echo "branch=master" >> "$GITHUB_OUTPUT"
+          else
+            echo "branch=" >> "$GITHUB_OUTPUT"
+            echo "Target ${{ matrix.repo }} has neither 'main' nor 'master'; skipping."
+          fi
+
       - name: Checkout target repo
+        id: checkout_target
+        if: steps.base.outputs.branch != ''
+        continue-on-error: true
         uses: actions/checkout@v4
         with:
-          repository: ${{ inputs.target_repo }}
+          repository: ${{ matrix.repo }}
           token: ${{ secrets.DISTRIBUTION_PAT }}
           path: target
-          ref: ${{ inputs.target_base_branch }}
+          ref: ${{ steps.base.outputs.branch }}
           fetch-depth: 0
           persist-credentials: true
 
       - name: Build payload (staging dir)
+        if: steps.checkout_target.outcome == 'success'
         run: bash source/.github/workflows/scripts/build-payload.sh source payload
 
       - name: Apply payload to target working tree
+        if: steps.checkout_target.outcome == 'success'
         run: bash source/.github/workflows/scripts/apply-payload.sh payload target
 
+      - name: Detect biome in target
+        if: steps.checkout_target.outcome == 'success'
+        id: biome
+        working-directory: target
+        run: |
+          if [ -f biome.json ] || [ -f biome.jsonc ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node.js for biome
+        if: steps.checkout_target.outcome == 'success' && steps.biome.outputs.present == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run biome check --write on target
+        if: steps.checkout_target.outcome == 'success' && steps.biome.outputs.present == 'true'
+        working-directory: target
+        run: |
+          set +e
+          npx --yes @biomejs/biome check --write .
+          exit 0
+
       - name: Compute branch name and source sha
+        if: steps.checkout_target.outcome == 'success'
         id: meta
         working-directory: source
         run: |
@@ -59,14 +131,40 @@ jobs:
           echo "branch=chore/sync-work-settings-$(date -u +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
           echo "source_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Close stale automated-sync PRs on target
+        if: steps.checkout_target.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIBUTION_PAT }}
+        run: |
+          set -euo pipefail
+          stale=$(gh pr list \
+            --repo "${{ matrix.repo }}" \
+            --state open \
+            --label automated-sync \
+            --base "${{ steps.base.outputs.branch }}" \
+            --json number \
+            -q '.[].number')
+          if [ -z "$stale" ]; then
+            echo "No stale automated-sync PRs on ${{ matrix.repo }}"
+            exit 0
+          fi
+          for num in $stale; do
+            echo "Closing stale PR #$num on ${{ matrix.repo }}"
+            gh pr close "$num" \
+              --repo "${{ matrix.repo }}" \
+              --delete-branch \
+              --comment "Superseded by a newer work-settings sync PR." || true
+          done
+
       - name: Create Pull Request in target repo
+        if: steps.checkout_target.outcome == 'success'
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           path: target
           token: ${{ secrets.DISTRIBUTION_PAT }}
           branch: ${{ steps.meta.outputs.branch }}
-          base: ${{ inputs.target_base_branch }}
+          base: ${{ steps.base.outputs.branch }}
           delete-branch: true
           commit-message: |
             chore: sync work-settings (${{ steps.meta.outputs.source_sha }})
@@ -79,6 +177,8 @@ jobs:
 
             - Source commit: `${{ steps.meta.outputs.source_sha }}`
             - Triggered by: @${{ github.actor }}
+            - Base branch: `${{ steps.base.outputs.branch }}`
+            - Biome auto-fix: ${{ steps.biome.outputs.present == 'true' && 'applied' || 'skipped (biome not configured)' }}
 
             ## 配布内容
             - `AGENTS.md` (root)
@@ -90,16 +190,17 @@ jobs:
             ## Notes
             - 本 PR は `distribute-settings.yml` ワークフローにより自動生成されました。
             - work-settings が管理するファイルのみ配布（上書き）します。配布先リポジトリ独自のファイルは残ります。
-          draft: ${{ inputs.pr_draft }}
+            - 配布先に `biome.json` / `biome.jsonc` があれば `biome check --write` で自動 fix を適用します。
+          draft: false
           labels: |
             chore
             automated-sync
 
       - name: Report result
-        if: always()
+        if: always() && steps.checkout_target.outcome == 'success'
         run: |
           if [ "${{ steps.cpr.outputs.pull-request-number }}" != "" ]; then
-            echo "PR created: ${{ steps.cpr.outputs.pull-request-url }}"
+            echo "[${{ matrix.repo }}] PR created: ${{ steps.cpr.outputs.pull-request-url }}"
           else
-            echo "No diff detected; PR was not created."
+            echo "[${{ matrix.repo }}] No diff detected; PR was not created."
           fi
