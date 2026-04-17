@@ -111,6 +111,31 @@ jobs:
           echo "branch=chore/sync-work-settings-$(date -u +%Y%m%d-%H%M%S)" >> "$GITHUB_OUTPUT"
           echo "source_sha=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
+      - name: Close stale automated-sync PRs on target
+        if: steps.checkout_target.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIBUTION_PAT }}
+        run: |
+          set -euo pipefail
+          stale=$(gh pr list \
+            --repo "${{ matrix.repo }}" \
+            --state open \
+            --label automated-sync \
+            --base main \
+            --json number \
+            -q '.[].number')
+          if [ -z "$stale" ]; then
+            echo "No stale automated-sync PRs on ${{ matrix.repo }}"
+            exit 0
+          fi
+          for num in $stale; do
+            echo "Closing stale PR #$num on ${{ matrix.repo }}"
+            gh pr close "$num" \
+              --repo "${{ matrix.repo }}" \
+              --delete-branch \
+              --comment "Superseded by a newer work-settings sync PR." || true
+          done
+
       - name: Create Pull Request in target repo
         if: steps.checkout_target.outcome == 'success'
         id: cpr
