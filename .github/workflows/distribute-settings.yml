@@ -51,23 +51,33 @@ jobs:
         with:
           path: source
 
+      - name: Resolve target base branch (main, fallback master)
+        id: base
+        env:
+          GH_TOKEN: ${{ secrets.DISTRIBUTION_PAT }}
+        run: |
+          set -euo pipefail
+          if gh api "repos/${{ matrix.repo }}/branches/main" --silent >/dev/null 2>&1; then
+            echo "branch=main" >> "$GITHUB_OUTPUT"
+          elif gh api "repos/${{ matrix.repo }}/branches/master" --silent >/dev/null 2>&1; then
+            echo "branch=master" >> "$GITHUB_OUTPUT"
+          else
+            echo "branch=" >> "$GITHUB_OUTPUT"
+            echo "Target ${{ matrix.repo }} has neither 'main' nor 'master'; skipping."
+          fi
+
       - name: Checkout target repo
         id: checkout_target
+        if: steps.base.outputs.branch != ''
         continue-on-error: true
         uses: actions/checkout@v4
         with:
           repository: ${{ matrix.repo }}
           token: ${{ secrets.DISTRIBUTION_PAT }}
           path: target
-          ref: main
+          ref: ${{ steps.base.outputs.branch }}
           fetch-depth: 0
           persist-credentials: true
-
-      - name: Skip if target has no main branch
-        if: steps.checkout_target.outcome != 'success'
-        run: |
-          echo "Target ${{ matrix.repo }} has no 'main' branch; skipping."
-          exit 0
 
       - name: Build payload (staging dir)
         if: steps.checkout_target.outcome == 'success'
@@ -121,7 +131,7 @@ jobs:
             --repo "${{ matrix.repo }}" \
             --state open \
             --label automated-sync \
-            --base main \
+            --base "${{ steps.base.outputs.branch }}" \
             --json number \
             -q '.[].number')
           if [ -z "$stale" ]; then
@@ -144,7 +154,7 @@ jobs:
           path: target
           token: ${{ secrets.DISTRIBUTION_PAT }}
           branch: ${{ steps.meta.outputs.branch }}
-          base: main
+          base: ${{ steps.base.outputs.branch }}
           delete-branch: true
           commit-message: |
             chore: sync work-settings (${{ steps.meta.outputs.source_sha }})
@@ -157,6 +167,7 @@ jobs:
 
             - Source commit: `${{ steps.meta.outputs.source_sha }}`
             - Triggered by: @${{ github.actor }}
+            - Base branch: `${{ steps.base.outputs.branch }}`
             - Biome auto-fix: ${{ steps.biome.outputs.present == 'true' && 'applied' || 'skipped (biome not configured)' }}
 
             ## 配布内容
