@@ -5,6 +5,12 @@ on:
     branches:
       - main
       - master
+    paths:
+      - 'AGENTS.md'
+      - '.ai/**'
+      - '.claude/settings.json'
+      - '.github/workflows/distribute-settings.yml'
+      - '.github/workflows/scripts/**'
   workflow_dispatch:
 
 permissions:
