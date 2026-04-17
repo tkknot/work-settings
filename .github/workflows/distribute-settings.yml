@@ -1,6 +1,10 @@
 name: Distribute settings to all tkknot repositories
 
 on:
+  push:
+    branches:
+      - main
+      - master
   workflow_dispatch:
 
 permissions:
