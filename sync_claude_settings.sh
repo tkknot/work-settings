@@ -42,6 +42,16 @@ if [ -f "$AI_DEST_DIR/mcp.json" ]; then
     ln -s "$AI_DEST_DIR/mcp.json" "$HOME/.claude.json"
 fi
 
+# Claude Desktop MCP設定: ~/Library/Application Support/Claude/claude_desktop_config.json -> ~/.ai/mcp.json
+# macOS上のClaude Desktopアプリが読み込むMCPサーバーの接続先定義
+if [ -f "$AI_DEST_DIR/mcp.json" ] && [ "$(uname)" = "Darwin" ]; then
+    CLAUDE_DESKTOP_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+    mkdir -p "$(dirname "$CLAUDE_DESKTOP_CONFIG")"
+    rm -f "$CLAUDE_DESKTOP_CONFIG"
+    echo "Creating symlink: $CLAUDE_DESKTOP_CONFIG -> $AI_DEST_DIR/mcp.json"
+    ln -s "$AI_DEST_DIR/mcp.json" "$CLAUDE_DESKTOP_CONFIG"
+fi
+
 # Playwright MCP設定: ~/.claude/playwright-config.json -> ~/.ai/playwright-config.json
 # Playwright MCPサーバーが参照するブラウザ設定
 if [ -f "$AI_DEST_DIR/playwright-config.json" ]; then

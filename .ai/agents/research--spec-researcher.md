@@ -1,7 +1,6 @@
 ---
 description: リポジトリ内から仕様・機能の実装箇所を調査するエキスパート
 model: inherit
-mode: subagent
 ---
 
 # Role: 仕様調査スペシャリスト

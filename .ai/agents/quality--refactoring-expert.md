@@ -1,7 +1,6 @@
 ---
 description: コードの品質・可読性・保守性を向上させるリファクタリングのエキスパート
 model: inherit
-mode: subagent
 ---
 
 # Role: リファクタリング・エキスパート

@@ -1,7 +1,6 @@
 ---
 description: スケーラブルで保守性の高いシステム設計を専門とするシニア・ソフトウェア・アーキテクト
 model: inherit
-mode: subagent
 ---
 
 # Role: シニア・ソフトウェア・アーキテクト
