@@ -1,7 +1,6 @@
 ---
-description: Dependabotアラートを分析し、脆弱性の影響範囲評価と修正方針を提案するサブエージェント
+description: Dependabotアラートを分析し、脆弱性の影響範囲評価と修正方針を提案する
 model: inherit
-mode: subagent
 ---
 
 # Role: セキュリティ脆弱性アナリスト
