@@ -26,4 +26,24 @@ mkdir -p "$CURSOR_DIR"
 cp "$SOURCE" "$CURSOR_DIR/AGENTS.md"
 echo "Copied -> $CURSOR_DIR/AGENTS.md"
 
+# WSL detection: also distribute to Windows user profile so that Windows-native
+# Cursor / Claude Code / Claude Desktop see the same AGENTS.md
+if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
+    WINDOWS_USER="taked"
+    WINDOWS_HOME="/mnt/c/Users/$WINDOWS_USER"
+
+    echo ""
+    echo "WSL detected. Syncing AGENTS.md to Windows: $WINDOWS_HOME"
+
+    for sub in .ai .claude .cursor; do
+        mkdir -p "$WINDOWS_HOME/$sub"
+    done
+    cp "$SOURCE" "$WINDOWS_HOME/.ai/AGENTS.md"
+    cp "$SOURCE" "$WINDOWS_HOME/.claude/CLAUDE.md"
+    cp "$SOURCE" "$WINDOWS_HOME/.cursor/AGENTS.md"
+    echo "Copied -> $WINDOWS_HOME/.ai/AGENTS.md"
+    echo "Copied -> $WINDOWS_HOME/.claude/CLAUDE.md"
+    echo "Copied -> $WINDOWS_HOME/.cursor/AGENTS.md"
+fi
+
 echo "Done!"

@@ -69,5 +69,39 @@ if [ -f "$AI_DEST_DIR/.cursorindexignore" ]; then
     ln -s "$AI_DEST_DIR/.cursorindexignore" "$DEST_DIR/.cursorindexignore"
 fi
 
+# WSL detection: also distribute to Windows user profile so that Windows-native
+# Cursor sees the same config. We copy (not symlink) because symlinks created
+# in /mnt/c from WSL are not recognized by native Windows applications.
+if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
+    WINDOWS_USER="taked"
+    WINDOWS_HOME="/mnt/c/Users/$WINDOWS_USER"
+    WIN_AI_DIR="$WINDOWS_HOME/.ai"
+    WIN_CURSOR_DIR="$WINDOWS_HOME/.cursor"
+
+    echo ""
+    echo "=== WSL detected. Syncing to Windows: $WINDOWS_HOME ==="
+
+    mkdir -p "$WIN_AI_DIR"
+    rsync -av --delete --exclude='AGENTS.md' "$AI_SOURCE_DIR/" "$WIN_AI_DIR/"
+
+    mkdir -p "$WIN_CURSOR_DIR"
+    for dir in "${TARGET_DIRS[@]}"; do
+        if [ -d "$WIN_AI_DIR/$dir" ]; then
+            if [ -e "$WIN_CURSOR_DIR/$dir" ] || [ -L "$WIN_CURSOR_DIR/$dir" ]; then
+                rm -rf "$WIN_CURSOR_DIR/$dir"
+            fi
+            echo "Copying: $WIN_AI_DIR/$dir -> $WIN_CURSOR_DIR/$dir"
+            cp -r "$WIN_AI_DIR/$dir" "$WIN_CURSOR_DIR/$dir"
+        fi
+    done
+
+    for f in mcp.json playwright-config.json .cursorignore .cursorindexingignore; do
+        if [ -f "$WIN_AI_DIR/$f" ]; then
+            cp "$WIN_AI_DIR/$f" "$WIN_CURSOR_DIR/$f"
+            echo "Copied: $WIN_AI_DIR/$f -> $WIN_CURSOR_DIR/$f"
+        fi
+    done
+fi
+
 echo ""
 echo "Cursor sync complete!"

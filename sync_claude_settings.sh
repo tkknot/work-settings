@@ -68,5 +68,57 @@ if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
     cp "$SCRIPT_DIR/.claude/settings.json" "$DEST_DIR/settings.json"
 fi
 
+# WSL detection: also distribute to Windows user profile so that Windows-native
+# Claude Code / Claude Desktop see the same config. We copy (not symlink) because
+# symlinks created in /mnt/c from WSL are not recognized by native Windows apps.
+if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
+    WINDOWS_USER="taked"
+    WINDOWS_HOME="/mnt/c/Users/$WINDOWS_USER"
+    WIN_AI_DIR="$WINDOWS_HOME/.ai"
+    WIN_CLAUDE_DIR="$WINDOWS_HOME/.claude"
+
+    echo ""
+    echo "=== WSL detected. Syncing to Windows: $WINDOWS_HOME ==="
+
+    if [ ! -d "$WIN_AI_DIR" ]; then
+        mkdir -p "$WIN_AI_DIR"
+        rsync -av --delete --exclude='AGENTS.md' "./.ai/" "$WIN_AI_DIR/"
+    fi
+
+    mkdir -p "$WIN_CLAUDE_DIR"
+    for dir in "${TARGET_DIRS[@]}"; do
+        if [ -d "$WIN_AI_DIR/$dir" ]; then
+            if [ -e "$WIN_CLAUDE_DIR/$dir" ] || [ -L "$WIN_CLAUDE_DIR/$dir" ]; then
+                rm -rf "$WIN_CLAUDE_DIR/$dir"
+            fi
+            echo "Copying: $WIN_AI_DIR/$dir -> $WIN_CLAUDE_DIR/$dir"
+            cp -r "$WIN_AI_DIR/$dir" "$WIN_CLAUDE_DIR/$dir"
+        fi
+    done
+
+    # MCPサーバー設定: Windows側の %USERPROFILE%\.claude.json
+    if [ -f "$WIN_AI_DIR/mcp.json" ]; then
+        cp "$WIN_AI_DIR/mcp.json" "$WINDOWS_HOME/.claude.json"
+        echo "Copied: $WIN_AI_DIR/mcp.json -> $WINDOWS_HOME/.claude.json"
+    fi
+
+    # Claude Desktop MCP設定: %APPDATA%\Claude\claude_desktop_config.json
+    if [ -f "$WIN_AI_DIR/mcp.json" ]; then
+        WIN_CLAUDE_DESKTOP="$WINDOWS_HOME/AppData/Roaming/Claude/claude_desktop_config.json"
+        mkdir -p "$(dirname "$WIN_CLAUDE_DESKTOP")"
+        cp "$WIN_AI_DIR/mcp.json" "$WIN_CLAUDE_DESKTOP"
+        echo "Copied: $WIN_AI_DIR/mcp.json -> $WIN_CLAUDE_DESKTOP"
+    fi
+
+    if [ -f "$WIN_AI_DIR/playwright-config.json" ]; then
+        cp "$WIN_AI_DIR/playwright-config.json" "$WIN_CLAUDE_DIR/playwright-config.json"
+    fi
+
+    if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
+        cp "$SCRIPT_DIR/.claude/settings.json" "$WIN_CLAUDE_DIR/settings.json"
+        echo "Copied: $SCRIPT_DIR/.claude/settings.json -> $WIN_CLAUDE_DIR/settings.json"
+    fi
+fi
+
 echo ""
 echo "Claude sync complete!"
