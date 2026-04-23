@@ -8,7 +8,7 @@ AI_DEST_DIR="$HOME/.ai"
 
 echo "=== Syncing .ai to $AI_DEST_DIR ==="
 mkdir -p "$AI_DEST_DIR"
-rsync -av --delete "$AI_SOURCE_DIR/" "$AI_DEST_DIR/"
+rsync -av --delete --exclude='AGENTS.md' "$AI_SOURCE_DIR/" "$AI_DEST_DIR/"
 echo ".ai sync complete!"
 
 # Step 2: Create symlinks in ~/.cursor pointing to ~/.ai

@@ -15,7 +15,7 @@ TARGET_DIRS=("agents" "commands" "rules" "skills")
 if [ ! -d "$AI_DEST_DIR" ]; then
     echo "Syncing .ai to $AI_DEST_DIR first..."
     mkdir -p "$AI_DEST_DIR"
-    rsync -av --delete "./.ai/" "$AI_DEST_DIR/"
+    rsync -av --delete --exclude='AGENTS.md' "./.ai/" "$AI_DEST_DIR/"
 fi
 
 echo "=== Creating symlinks in $DEST_DIR -> $AI_DEST_DIR ==="

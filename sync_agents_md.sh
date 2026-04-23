@@ -8,6 +8,12 @@ SOURCE="$SCRIPT_DIR/AGENTS.md"
 
 echo "Syncing AGENTS.md..."
 
+# Centralized location: ~/.ai/AGENTS.md
+AI_DIR="$HOME/.ai"
+mkdir -p "$AI_DIR"
+cp "$SOURCE" "$AI_DIR/AGENTS.md"
+echo "Copied -> $AI_DIR/AGENTS.md"
+
 # Claude Code: ~/.claude/CLAUDE.md
 CLAUDE_DIR="$HOME/.claude"
 mkdir -p "$CLAUDE_DIR"
