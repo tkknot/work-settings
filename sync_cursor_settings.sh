@@ -15,9 +15,9 @@ echo ".ai sync complete!"
 DEST_DIR="$HOME/.cursor"
 
 # Cursorが参照するディレクトリ群
-# ~/.cursor/{agents,commands,rules,skills} -> ~/.ai/ のシンボリックリンクにして
+# ~/.cursor/{commands,rules,skills} -> ~/.ai/ のシンボリックリンクにして
 # CursorとClaude Codeで同じ定義を共有する
-TARGET_DIRS=("agents" "commands" "rules" "skills")
+TARGET_DIRS=("commands" "rules" "skills")
 
 echo ""
 echo "=== Creating symlinks in $DEST_DIR -> $AI_DEST_DIR ==="
