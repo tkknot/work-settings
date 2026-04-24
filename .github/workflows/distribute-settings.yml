@@ -156,9 +156,9 @@ jobs:
 
             ## 配布内容
             - `AGENTS.md` (root)
-            - `.cursor/` (agents, commands, rules, skills, mcp.json, playwright-config.json)
+            - `.cursor/` (commands, rules, skills, mcp.json, playwright-config.json)
             - `.cursorignore`, `.cursorindexingignore` (root)
-            - `.claude/` (agents, commands, rules, skills, mcp.json, playwright-config.json, settings.json)
+            - `.claude/` (commands, rules, skills, mcp.json, playwright-config.json, settings.json)
             - `.mcp.json` (root)
 
             ## Notes

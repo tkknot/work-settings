@@ -7,9 +7,9 @@ AI_DEST_DIR="$HOME/.ai"
 DEST_DIR="$HOME/.claude"
 
 # Claude Codeが参照するディレクトリ群
-# ~/.claude/{agents,commands,rules,skills} -> ~/.ai/ のシンボリックリンクにして
+# ~/.claude/{commands,rules,skills} -> ~/.ai/ のシンボリックリンクにして
 # Claude CodeとCursorで同じ定義を共有する
-TARGET_DIRS=("agents" "commands" "rules" "skills")
+TARGET_DIRS=("commands" "rules" "skills")
 
 # Sync .ai if not already done
 if [ ! -d "$AI_DEST_DIR" ]; then
