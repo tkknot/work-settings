@@ -4,5 +4,6 @@
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "language": "japanese",
-  "advisorModel": "opus"
+  "advisorModel": "opus",
+  "enableWorkflows": true
 }
