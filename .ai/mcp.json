@@ -17,7 +17,7 @@
         "@playwright/mcp@latest",
         "--isolated",
         "--config",
-        ".cursor/playwright-config.json"
+        ".claude/playwright-config.json"
       ],
       "env": {}
     },

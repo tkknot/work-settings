@@ -148,7 +148,7 @@ jobs:
           title: "chore: sync work-settings (${{ steps.meta.outputs.source_sha }})"
           body: |
             ## Summary
-            ${{ github.repository }} から AI 設定ファイル (agent / cursor / claude) を同期します。
+            ${{ github.repository }} から AI 設定ファイル (agent / claude) を同期します。
 
             - Source commit: `${{ steps.meta.outputs.source_sha }}`
             - Triggered by: @${{ github.actor }}
@@ -156,8 +156,6 @@ jobs:
 
             ## 配布内容
             - `AGENTS.md` (root)
-            - `.cursor/` (commands, rules, skills, mcp.json, playwright-config.json)
-            - `.cursorignore`, `.cursorindexingignore` (root)
             - `.claude/` (commands, rules, skills, mcp.json, playwright-config.json, settings.json)
             - `.mcp.json` (root)
 

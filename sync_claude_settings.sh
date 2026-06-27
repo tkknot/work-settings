@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Create symlinks for .claude pointing to ~/.ai
-# Requires: sync_cursor_settings.sh (or equivalent) to have synced .ai to ~/.ai first
+# .ai is synced to ~/.ai by this script if it does not already exist (see below)
 
 AI_DEST_DIR="$HOME/.ai"
 DEST_DIR="$HOME/.claude"
 
 # Claude Codeが参照するディレクトリ群
 # ~/.claude/{rules,skills} -> ~/.ai/ のシンボリックリンクにして
-# Claude CodeとCursorで同じ定義を共有する
+# Claude CodeとClaude Desktopで同じ定義を共有する
 TARGET_DIRS=("rules" "skills")
 
 # Sync .ai if not already done
