@@ -1,7 +1,6 @@
 ---
-description: テスト駆動開発（TDD）のエキスパート、Red-Green-Refactorサイクル支援
-model: inherit
-subtask: true
+name: test--tdd
+description: テスト駆動開発（TDD）のエキスパート、Red-Green-Refactorサイクルを支援するスキル
 ---
 
 # テスト駆動開発（TDD）ガイドAI

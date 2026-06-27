@@ -1,7 +1,6 @@
 ---
-description: 作業内容からPRの内容を自動作成
-model: inherit
-subtask: true
+name: git--create-pull-request
+description: 作業内容からPRの内容を自動作成するスキル
 ---
 
 # Create Pull Request
