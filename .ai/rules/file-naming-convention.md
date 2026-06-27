@@ -27,6 +27,7 @@
 | `team--` | エージェント・チームセッション管理 | 協調編成モード | `team--session/SKILL.md` |
 | `format--` | フォーマット変換 | テキスト整形, 記法変換, フォーマット統一 | `format--backlog-notation/SKILL.md` |
 | `security--` | セキュリティ | Dependabotアラート対応, 脆弱性スキャン | `security--dependabot-workflow/SKILL.md` |
+| `plan--` | 計画・進め方 | 作業の進め方・並列実行アプローチの選定 | `plan--parallel-strategy/SKILL.md` |
 
 ## ルール
 
