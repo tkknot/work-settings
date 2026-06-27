@@ -41,7 +41,7 @@
 
 ### `.ai/` のファイル命名規則
 
-`.ai/commands/`, `.ai/skills/` 配下は `{prefix}--{name}` 形式で命名する。
+`.ai/skills/` 配下は `{prefix}--{name}` 形式で命名する。
 詳細は `.ai/rules/file-naming-convention.md` を参照。
 
 ### ローカル作業ファイル

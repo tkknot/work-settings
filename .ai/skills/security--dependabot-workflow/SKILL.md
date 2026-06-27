@@ -127,7 +127,7 @@ curl -L \
 
 ### Step 1: アラートの確認
 
-**AIのタスク**: `/security--dependabot-fix-command` でアラートを取得・集計
+**AIのタスク**: Dependabotアラートを取得・集計
 ```
 例: 「このリポジトリのDependabotアラートを確認してください」
 ```
@@ -165,9 +165,8 @@ curl -L \
 
 ---
 
-## 関連ツール
+## 関連エージェント
 
-| ツール | 用途 |
+| エージェント | 用途 |
 |--------|------|
-| `/security--dependabot-fix-command` | Dependabotアラートの取得・集計・修正実行 |
-| `security--dependabot-analyst` エージェント | 個別脆弱性の分析・修正方針提案 |
+| `security--dependabot-analyst` | 個別脆弱性の分析・修正方針提案 |

@@ -1,10 +1,9 @@
 ---
-description: 与えられたコードをリファクタリングし、品質と可読性を向上
-model: inherit
-subtask: true
+name: quality--refactor
+description: 与えられたコードをリファクタリングし、品質・可読性・保守性を向上させるスキル
 ---
 
-# Refactor Command
+# Refactor Skill
 
 与えられたコードをリファクタリングし、品質・可読性・保守性を向上させます。
 

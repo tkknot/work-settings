@@ -1,12 +1,11 @@
 ---
-description: git worktreeでブランチを別ディレクトリにチェックアウト（作成/一覧/削除/切り替え）
-model: inherit
-subtask: true
+name: git--git-worktree
+description: git worktreeでブランチを別ディレクトリにチェックアウト（作成/一覧/削除/切り替え）するスキル
 ---
 
-# Git Worktree Command
+# Git Worktree Skill
 
-インタラクティブにgit worktreeを管理するコマンド。
+インタラクティブにgit worktreeを管理するスキル。
 
 ## 実行手順
 

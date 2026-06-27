@@ -1,10 +1,9 @@
 ---
-description: このブランチで起きた変更を解説・要約
-model: inherit
-subtask: true
+name: git--branch-summary
+description: このブランチで起きた変更を解説・要約するスキル
 ---
 
-# Branch Summary Command
+# Branch Summary Skill
 
 ## 概要
 
