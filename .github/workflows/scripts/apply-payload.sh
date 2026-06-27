@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Apply a staging payload to a target repo working tree.
-# Overwrites AGENTS.md, .cursorignore, .cursorindexingignore, .mcp.json;
-# For .cursor/ and .claude/, uses add/update-only rsync (no --delete) so
+# Overwrites AGENTS.md, .mcp.json;
+# For .claude/, uses add/update-only rsync (no --delete) so
 # that files unique to the target repo (not managed by work-settings) are
 # preserved.
 
@@ -29,12 +29,6 @@ if [ -f "$PAYLOAD/AGENTS.md" ]; then
   cp "$PAYLOAD/AGENTS.md" "$TARGET/AGENTS.md"
 fi
 
-# .cursor/ : add/update only (preserves target-only files)
-if [ -d "$PAYLOAD/.cursor" ]; then
-  mkdir -p "$TARGET/.cursor"
-  rsync -a "$PAYLOAD/.cursor/" "$TARGET/.cursor/"
-fi
-
 # .claude/ : add/update only (preserves target-only files)
 if [ -d "$PAYLOAD/.claude" ]; then
   mkdir -p "$TARGET/.claude"
@@ -42,8 +36,6 @@ if [ -d "$PAYLOAD/.claude" ]; then
 fi
 
 # Root-level single files
-[ -f "$PAYLOAD/.cursorignore" ]         && cp "$PAYLOAD/.cursorignore"         "$TARGET/.cursorignore"
-[ -f "$PAYLOAD/.cursorindexingignore" ] && cp "$PAYLOAD/.cursorindexingignore" "$TARGET/.cursorindexingignore"
-[ -f "$PAYLOAD/.mcp.json" ]             && cp "$PAYLOAD/.mcp.json"             "$TARGET/.mcp.json"
+[ -f "$PAYLOAD/.mcp.json" ] && cp "$PAYLOAD/.mcp.json" "$TARGET/.mcp.json"
 
 echo "payload applied to $TARGET"

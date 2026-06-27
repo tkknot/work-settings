@@ -22,24 +22,10 @@ mkdir -p "$OUT"
 # agent: AGENTS.md -> target root
 cp "$SRC/AGENTS.md" "$OUT/AGENTS.md"
 
-# cursor: .ai/ content -> .cursor/ (excluding cursor ignore files which go to root)
-mkdir -p "$OUT/.cursor"
-rsync -a \
-  --exclude='.cursorignore' \
-  --exclude='.cursorindexingignore' \
-  "$SRC/.ai/" "$OUT/.cursor/"
-
 # claude: .ai/ content -> .claude/ + settings.json
 mkdir -p "$OUT/.claude"
-rsync -a \
-  --exclude='.cursorignore' \
-  --exclude='.cursorindexingignore' \
-  "$SRC/.ai/" "$OUT/.claude/"
+rsync -a "$SRC/.ai/" "$OUT/.claude/"
 cp "$SRC/.claude/settings.json" "$OUT/.claude/settings.json"
-
-# Root-level files
-[ -f "$SRC/.ai/.cursorignore" ]         && cp "$SRC/.ai/.cursorignore"         "$OUT/.cursorignore"
-[ -f "$SRC/.ai/.cursorindexingignore" ] && cp "$SRC/.ai/.cursorindexingignore" "$OUT/.cursorindexingignore"
 
 # .mcp.json: project-level MCP config for Claude Code at repo root
 cp "$SRC/.ai/mcp.json" "$OUT/.mcp.json"
