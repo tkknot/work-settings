@@ -9,18 +9,20 @@ set -euo pipefail
 
 mode="${1:-2}"
 
+# 分割で生まれるペインは常にホーム($HOME)で開く
+# （WSL では指定しないと Windows 側 cwd にフォールバックするため明示する）
 case "$mode" in
   4)
     # 右に分割して右ペインIDを取得 → 左右それぞれを下に分割し 2x2 を作る
-    right=$(wezterm cli split-pane --right --percent 50)
-    wezterm cli split-pane --bottom --percent 50 >/dev/null
-    wezterm cli split-pane --bottom --percent 50 --pane-id "$right" >/dev/null
+    right=$(wezterm cli split-pane --right --percent 50 --cwd "$HOME")
+    wezterm cli split-pane --bottom --percent 50 --cwd "$HOME" >/dev/null
+    wezterm cli split-pane --bottom --percent 50 --pane-id "$right" --cwd "$HOME" >/dev/null
     ;;
   2|2h)
-    wezterm cli split-pane --right --percent 50 >/dev/null
+    wezterm cli split-pane --right --percent 50 --cwd "$HOME" >/dev/null
     ;;
   2v)
-    wezterm cli split-pane --bottom --percent 50 >/dev/null
+    wezterm cli split-pane --bottom --percent 50 --cwd "$HOME" >/dev/null
     ;;
   *)
     echo "Usage: wezterm-split.sh [2|2v|4]" >&2

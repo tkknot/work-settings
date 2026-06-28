@@ -5,5 +5,18 @@
   },
   "language": "japanese",
   "advisorModel": "opus",
-  "enableWorkflows": true
+  "enableWorkflows": true,
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "printf '\\a'"
+          }
+        ]
+      }
+    ]
+  }
 }
