@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+local act = wezterm.action
 local config = {}
 
 -- 最新のWezTermではconfig_builderを使うのが推奨されています
@@ -53,6 +54,9 @@ config.scrollback_lines = 10000
 config.use_ime = true
 
 -- --- キーバインド設定 ---
+-- リーダーキー（Ctrl+b）。LEADER を前置するキーバインドで使用する
+config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
+
 config.keys = {
 	{
 		key = "E",
@@ -113,34 +117,138 @@ end
 
 -- --- ペイン分割レイアウト ---
 -- 数字キーは Shift 併用でシフト記号に化けるため、レイアウト非依存の phys: 表記で指定する
+-- WSL(Windows) では分割時に cwd が /mnt/c/... へフォールバックするため、WSL ホームを明示する
+-- （cwd 文字列は ~ 展開非対応／wezterm.home_dir は Windows ホームを指すためハードコードする）
+-- 他プラットフォームでは nil とし、従来どおり cwd を継承させる
+local split_cwd = nil
+if wezterm.target_triple:find("windows") then
+	split_cwd = "/home/kazuki"
+end
+
 -- Ctrl+Shift+4 : 2x2 の田の字
 table.insert(config.keys, {
 	key = "phys:4",
 	mods = "CTRL|SHIFT",
 	action = wezterm.action_callback(function(_, pane)
 		-- 右に分割して右ペインを取得 → 左右それぞれを下に分割し 2x2 を作る
-		local right = pane:split({ direction = "Right", size = 0.5 })
-		pane:split({ direction = "Bottom", size = 0.5 })
-		right:split({ direction = "Bottom", size = 0.5 })
+		local right = pane:split({ direction = "Right", size = 0.5, cwd = split_cwd })
+		pane:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
+		right:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
 	end),
 })
 -- Ctrl+Shift+2 : 左右 2 分割（縦線）
 table.insert(config.keys, {
 	key = "phys:2",
 	mods = "CTRL|SHIFT",
-	action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+	action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain", cwd = split_cwd }),
 })
 -- Ctrl+Shift+3 : 上下 2 分割（横線）
 table.insert(config.keys, {
 	key = "phys:3",
 	mods = "CTRL|SHIFT",
-	action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+	action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain", cwd = split_cwd }),
+})
+
+-- LEADER+z : 直前のコマンドと出力をコピー（OSC 133 セマンティックゾーンを使用）
+-- ※ シェル統合(OSC 133)が必要。sync_shell.sh で ~/.bashrc に導入する
+table.insert(config.keys, {
+	key = "z",
+	mods = "LEADER",
+	action = wezterm.action_callback(function(window, pane)
+		-- コピーモードに入る
+		window:perform_action(act.ActivateCopyMode, pane)
+
+		-- 直前のInputゾーン（最後のコマンド）に移動
+		window:perform_action(act.CopyMode({ MoveBackwardZoneOfType = "Input" }), pane)
+
+		-- セル選択モードを開始
+		window:perform_action(act.CopyMode({ SetSelectionMode = "Cell" }), pane)
+
+		-- 次のPromptゾーンまで選択（コマンドと出力を含む）
+		window:perform_action(act.CopyMode({ MoveForwardZoneOfType = "Prompt" }), pane)
+
+		-- 1行上に移動して行末へ（現在のプロンプト行を除外）
+		window:perform_action(act.CopyMode("MoveUp"), pane)
+		window:perform_action(act.CopyMode("MoveToEndOfLineContent"), pane)
+
+		-- クリップボードにコピー
+		window:perform_action(
+			act.Multiple({
+				{ CopyTo = "ClipboardAndPrimarySelection" },
+				{ Multiple = { "ScrollToBottom", { CopyMode = "Close" } } },
+			}),
+			pane
+		)
+
+		-- ステータスバーに一時的なステータスを表示
+		window:set_right_status("📋 Copied!")
+		-- 3秒後にクリア
+		wezterm.time.call_after(3, function()
+			window:set_right_status("")
+		end)
+	end),
+})
+
+-- LEADER+h/j/k/l : ペイン移動（vim 風）
+table.insert(config.keys, { key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") })
+table.insert(config.keys, { key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") })
+table.insert(config.keys, { key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") })
+table.insert(config.keys, { key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") })
+
+-- Ctrl+Shift+L : デバッグオーバーレイを表示（ログ確認用）
+table.insert(config.keys, {
+	key = "L",
+	mods = "CTRL",
+	action = wezterm.action.ShowDebugOverlay,
 })
 
 -- --- イベントハンドラ ---
 -- 設定がリロードされた時にログ（Ctrl+Shift+Lで表示）を出力する
 wezterm.on("window-config-reloaded", function(window, _)
 	wezterm.log_info("the config was reloaded for this window!")
+end)
+
+-- Claude Code 通知: 回答完了時に Stop フックがベル（\a）を鳴らす → OS トースト通知を表示する
+-- window:toast_notification() は Windows / macOS 両対応
+wezterm.on("bell", function(window, pane)
+	local tab = pane:tab()
+
+	-- どのタブからのベルかを 1-indexed 番号で特定する
+	local bell_tab_id = tab:tab_id()
+	local tab_index = 1
+	for i, t in ipairs(window:mux_window():tabs()) do
+		if t:tab_id() == bell_tab_id then
+			tab_index = i
+			break
+		end
+	end
+	local label = "タブ " .. tab_index
+
+	-- タブタイトルが設定されていれば "タブ N: タイトル" 形式にする
+	local tab_title = tab:get_title()
+	if tab_title and tab_title ~= "" then
+		label = label .. ": " .. tab_title
+	end
+
+	-- 同一タブ内に複数ペインがあれば、発信ペインの位置(左上/右上/左下/右下)を付与する
+	local infos = tab:panes_with_info()
+	if #infos > 1 then
+		local me, max_r, max_b = nil, 0, 0
+		for _, info in ipairs(infos) do
+			max_r = math.max(max_r, info.left + info.width)
+			max_b = math.max(max_b, info.top + info.height)
+			if info.pane:pane_id() == pane:pane_id() then
+				me = info
+			end
+		end
+		if me then
+			local v = (me.top + me.height / 2) < (max_b / 2) and "上" or "下"
+			local h = (me.left + me.width / 2) < (max_r / 2) and "左" or "右"
+			label = label .. " " .. v .. h .. "ペイン"
+		end
+	end
+
+	window:toast_notification("Claude Code", label .. " の回答が完了しました", nil, 4000)
 end)
 
 return config
