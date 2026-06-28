@@ -68,6 +68,30 @@ config.keys = {
 	},
 }
 
+-- Windows向けにCtrl+C/Ctrl+Vでコピー＆ペーストできるようにする
+if wezterm.target_triple:find("windows") then
+	-- Ctrl+C: 選択範囲があればコピー、なければCtrl+C（SIGINT）を送信する
+	table.insert(config.keys, {
+		key = "c",
+		mods = "CTRL",
+		action = wezterm.action_callback(function(window, pane)
+			local has_selection = window:get_selection_text_for_pane(pane) ~= ""
+			if has_selection then
+				window:perform_action(wezterm.action.CopyTo("ClipboardAndPrimarySelection"), pane)
+				window:perform_action(wezterm.action.ClearSelection, pane)
+			else
+				window:perform_action(wezterm.action.SendKey({ key = "c", mods = "CTRL" }), pane)
+			end
+		end),
+	})
+	-- Ctrl+V: クリップボードからペーストする
+	table.insert(config.keys, {
+		key = "v",
+		mods = "CTRL",
+		action = wezterm.action.PasteFrom("Clipboard"),
+	})
+end
+
 -- macOS向けにCMD+Tも同様に設定
 if wezterm.target_triple:find("darwin") then
 	table.insert(config.keys, {
