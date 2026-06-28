@@ -189,6 +189,12 @@ table.insert(config.keys, {
 	end),
 })
 
+-- LEADER+h/j/k/l : ペイン移動（vim 風）
+table.insert(config.keys, { key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") })
+table.insert(config.keys, { key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") })
+table.insert(config.keys, { key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") })
+table.insert(config.keys, { key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") })
+
 -- Ctrl+Shift+L : デバッグオーバーレイを表示（ログ確認用）
 table.insert(config.keys, {
 	key = "L",
