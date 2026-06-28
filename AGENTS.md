@@ -43,6 +43,14 @@
 `.ai/skills/` 配下は `{prefix}--{name}` 形式で命名する。
 詳細は `.ai/rules/file-naming-convention.md` を参照。
 
+### 共通ルール（`.ai/rules/`）
+
+設定・スクリプトを扱う際は以下のルールに従う。
+
+- セキュリティ・ベースライン: `.ai/rules/security-baseline.md`
+  （秘密情報を含めない／状態ファイルと設定ファイルを混在させない／破壊的操作前に確認）
+- コミットメッセージ規約: `.ai/rules/commit-convention.md`
+
 ### ローカル作業ファイル
 
 `_local.` prefixのファイルはgitignoreで無視される。会社環境でのメモやスクラッチコードに使用する。
