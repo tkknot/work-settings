@@ -54,8 +54,8 @@ config.scrollback_lines = 10000
 config.use_ime = true
 
 -- --- キーバインド設定 ---
--- リーダーキー（Ctrl+Space）。LEADER を前置するキーバインドで使用する
-config.leader = { key = "Space", mods = "CTRL", timeout_milliseconds = 1000 }
+-- リーダーキー（Ctrl+b）。LEADER を前置するキーバインドで使用する
+config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
 
 config.keys = {
 	{
