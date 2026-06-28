@@ -65,8 +65,19 @@ register_mcp_servers() {
     fi
     local name cfg
     while IFS= read -r name; do
-        cfg="$(jq -c --arg n "$name" '.mcpServers[$n]' "$mcp_file")"
-        claude mcp remove "$name" --scope user >/dev/null 2>&1 || true
+        # 既に登録済み（任意スコープ）なら上書きせずスキップ。削除/無効化は手動運用。
+        if claude mcp get "$name" >/dev/null 2>&1; then
+            echo "Skipped (already registered): $name"
+            continue
+        fi
+        # Playwright の --config 相対パスは CC 起動 cwd 基準で解決できず接続失敗するため、
+        # ホームの絶対パス（symlink 実体 $DEST_DIR/playwright-config.json）へ置換する。
+        cfg="$(jq -c --arg n "$name" --arg cfgdir "$DEST_DIR" '
+            .mcpServers[$n]
+            | if has("args") then
+                .args |= map(if . == ".claude/playwright-config.json"
+                             then $cfgdir + "/playwright-config.json" else . end)
+              else . end' "$mcp_file")"
         if claude mcp add-json "$name" "$cfg" --scope user >/dev/null 2>&1; then
             echo "Registered MCP server (user scope): $name"
         else
@@ -136,7 +147,8 @@ if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
         WIN_CLAUDE_JSON="$WINDOWS_HOME/.claude.json"
         tmp="$(mktemp)"
         if [ -f "$WIN_CLAUDE_JSON" ]; then
-            jq -s '.[0] * {mcpServers: .[1].mcpServers}' "$WIN_CLAUDE_JSON" "$WIN_AI_DIR/mcp.json" >"$tmp" && mv "$tmp" "$WIN_CLAUDE_JSON"
+            # 既存登録は上書きせず新規サーバーのみ追加（キー衝突時は既存=.[0] が勝つ）。削除は手動運用。
+            jq -s '.[0] + {mcpServers: (.[1].mcpServers + (.[0].mcpServers // {}))}' "$WIN_CLAUDE_JSON" "$WIN_AI_DIR/mcp.json" >"$tmp" && mv "$tmp" "$WIN_CLAUDE_JSON"
         else
             jq '{mcpServers: .mcpServers}' "$WIN_AI_DIR/mcp.json" >"$WIN_CLAUDE_JSON"
         fi
