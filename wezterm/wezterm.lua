@@ -208,7 +208,7 @@ wezterm.on("window-config-reloaded", function(window, _)
 	wezterm.log_info("the config was reloaded for this window!")
 end)
 
--- Claude Code 通知: ベル（\a）受信時に OS トースト通知を表示する
+-- Claude Code 通知: 回答完了時に Stop フックがベル（\a）を鳴らす → OS トースト通知を表示する
 -- window:toast_notification() は Windows / macOS 両対応
 wezterm.on("bell", function(window, pane)
 	local tab = pane:tab()
@@ -248,7 +248,7 @@ wezterm.on("bell", function(window, pane)
 		end
 	end
 
-	window:toast_notification("Claude Code", label .. " が入力待ちです", nil, 4000)
+	window:toast_notification("Claude Code", label .. " の回答が完了しました", nil, 4000)
 end)
 
 return config

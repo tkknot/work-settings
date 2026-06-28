@@ -7,7 +7,7 @@
   "advisorModel": "opus",
   "enableWorkflows": true,
   "hooks": {
-    "Notification": [
+    "Stop": [
       {
         "matcher": "",
         "hooks": [
