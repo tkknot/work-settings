@@ -13,7 +13,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "printf '\\a'"
+            "command": "bash \"$HOME/.ai/hooks/claude-notify.sh\""
           }
         ]
       }

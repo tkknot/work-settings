@@ -208,47 +208,40 @@ wezterm.on("window-config-reloaded", function(window, _)
 	wezterm.log_info("the config was reloaded for this window!")
 end)
 
--- Claude Code 通知: 回答完了時に Stop フックがベル（\a）を鳴らす → OS トースト通知を表示する
--- window:toast_notification() は Windows / macOS 両対応
-wezterm.on("bell", function(window, pane)
-	local tab = pane:tab()
-
-	-- どのタブからのベルかを 1-indexed 番号で特定する
-	local bell_tab_id = tab:tab_id()
-	local tab_index = 1
-	for i, t in ipairs(window:mux_window():tabs()) do
-		if t:tab_id() == bell_tab_id then
-			tab_index = i
-			break
+-- シェルで `nvim` と打つと別タブで開く（WSL 用）
+-- WSL からは wezterm cli が mux に到達できずハングするため、シェル側(shell/wezterm-nvim.sh)が
+-- OSC 1337 SetUserVar=claude_open_nvim=<base64> を emit し、GUI 側のここで新規タブを起動する。
+-- WSL ドメインを参照するため Windows ホストでのみ登録する。
+if wezterm.target_triple:find("windows") then
+	wezterm.on("user-var-changed", function(window, _pane, name, value)
+		if name ~= "claude_open_nvim" then
+			return
 		end
-	end
-	local label = "タブ " .. tab_index
-
-	-- タブタイトルが設定されていれば "タブ N: タイトル" 形式にする
-	local tab_title = tab:get_title()
-	if tab_title and tab_title ~= "" then
-		label = label .. ": " .. tab_title
-	end
-
-	-- 同一タブ内に複数ペインがあれば、発信ペインの位置(左上/右上/左下/右下)を付与する
-	local infos = tab:panes_with_info()
-	if #infos > 1 then
-		local me, max_r, max_b = nil, 0, 0
-		for _, info in ipairs(infos) do
-			max_r = math.max(max_r, info.left + info.width)
-			max_b = math.max(max_b, info.top + info.height)
-			if info.pane:pane_id() == pane:pane_id() then
-				me = info
+		-- value(wezterm が base64 デコード済み): "nonce\ncwd\nfile1\nfile2..."
+		local lines = {}
+		for line in (value .. "\n"):gmatch("(.-)\n") do
+			table.insert(lines, line)
+		end
+		table.remove(lines, 1) -- nonce を捨てる
+		local cwd = table.remove(lines, 1)
+		local args = { "nvim" }
+		for _, f in ipairs(lines) do
+			if f ~= "" then
+				table.insert(args, f)
 			end
 		end
-		if me then
-			local v = (me.top + me.height / 2) < (max_b / 2) and "上" or "下"
-			local h = (me.left + me.width / 2) < (max_r / 2) and "左" or "右"
-			label = label .. " " .. v .. h .. "ペイン"
-		end
-	end
 
-	window:toast_notification("Claude Code", label .. " の回答が完了しました", nil, 4000)
-end)
+		local spawn = { args = args, domain = { DomainName = "WSL:Ubuntu-24.04" } }
+		if cwd and cwd ~= "" then
+			spawn.cwd = cwd
+		end
+		local ok, tab = pcall(function()
+			return window:mux_window():spawn_tab(spawn)
+		end)
+		if ok and tab then
+			tab:activate()
+		end
+	end)
+end
 
 return config
