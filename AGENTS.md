@@ -36,7 +36,8 @@
 | `.claude/` | Claude Code固有の設定（settings.json） |
 | `nvim/` | Neovim設定（LazyVimベース） |
 | `wezterm/` | WezTerm設定 |
-| `sync_*_settings.sh` | 各ツールの設定をホームディレクトリに配布するスクリプト |
+| `shell/` | シェル統合スクリプト（WezTerm の OSC 7/133/1337） |
+| `sync_*.sh` | 各ツールの設定をホームディレクトリに配布するスクリプト |
 
 ### `.ai/` のファイル命名規則
 

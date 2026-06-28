@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+local act = wezterm.action
 local config = {}
 
 -- 最新のWezTermではconfig_builderを使うのが推奨されています
@@ -53,6 +54,9 @@ config.scrollback_lines = 10000
 config.use_ime = true
 
 -- --- キーバインド設定 ---
+-- リーダーキー（Ctrl+Space）。LEADER を前置するキーバインドで使用する
+config.leader = { key = "Space", mods = "CTRL", timeout_milliseconds = 1000 }
+
 config.keys = {
 	{
 		key = "E",
@@ -143,6 +147,53 @@ table.insert(config.keys, {
 	key = "phys:3",
 	mods = "CTRL|SHIFT",
 	action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain", cwd = split_cwd }),
+})
+
+-- LEADER+z : 直前のコマンドと出力をコピー（OSC 133 セマンティックゾーンを使用）
+-- ※ シェル統合(OSC 133)が必要。sync_shell.sh で ~/.bashrc に導入する
+table.insert(config.keys, {
+	key = "z",
+	mods = "LEADER",
+	action = wezterm.action_callback(function(window, pane)
+		-- コピーモードに入る
+		window:perform_action(act.ActivateCopyMode, pane)
+
+		-- 直前のInputゾーン（最後のコマンド）に移動
+		window:perform_action(act.CopyMode({ MoveBackwardZoneOfType = "Input" }), pane)
+
+		-- セル選択モードを開始
+		window:perform_action(act.CopyMode({ SetSelectionMode = "Cell" }), pane)
+
+		-- 次のPromptゾーンまで選択（コマンドと出力を含む）
+		window:perform_action(act.CopyMode({ MoveForwardZoneOfType = "Prompt" }), pane)
+
+		-- 1行上に移動して行末へ（現在のプロンプト行を除外）
+		window:perform_action(act.CopyMode("MoveUp"), pane)
+		window:perform_action(act.CopyMode("MoveToEndOfLineContent"), pane)
+
+		-- クリップボードにコピー
+		window:perform_action(
+			act.Multiple({
+				{ CopyTo = "ClipboardAndPrimarySelection" },
+				{ Multiple = { "ScrollToBottom", { CopyMode = "Close" } } },
+			}),
+			pane
+		)
+
+		-- ステータスバーに一時的なステータスを表示
+		window:set_right_status("📋 Copied!")
+		-- 3秒後にクリア
+		wezterm.time.call_after(3, function()
+			window:set_right_status("")
+		end)
+	end),
+})
+
+-- Ctrl+Shift+L : デバッグオーバーレイを表示（ログ確認用）
+table.insert(config.keys, {
+	key = "L",
+	mods = "CTRL",
+	action = wezterm.action.ShowDebugOverlay,
 })
 
 -- --- イベントハンドラ ---
