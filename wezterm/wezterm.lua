@@ -111,6 +111,32 @@ if wezterm.target_triple:find("darwin") then
 	})
 end
 
+-- --- ペイン分割レイアウト ---
+-- 数字キーは Shift 併用でシフト記号に化けるため、レイアウト非依存の phys: 表記で指定する
+-- Ctrl+Shift+4 : 2x2 の田の字
+table.insert(config.keys, {
+	key = "phys:4",
+	mods = "CTRL|SHIFT",
+	action = wezterm.action_callback(function(_, pane)
+		-- 右に分割して右ペインを取得 → 左右それぞれを下に分割し 2x2 を作る
+		local right = pane:split({ direction = "Right", size = 0.5 })
+		pane:split({ direction = "Bottom", size = 0.5 })
+		right:split({ direction = "Bottom", size = 0.5 })
+	end),
+})
+-- Ctrl+Shift+2 : 左右 2 分割（縦線）
+table.insert(config.keys, {
+	key = "phys:2",
+	mods = "CTRL|SHIFT",
+	action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+})
+-- Ctrl+Shift+3 : 上下 2 分割（横線）
+table.insert(config.keys, {
+	key = "phys:3",
+	mods = "CTRL|SHIFT",
+	action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+})
+
 -- --- イベントハンドラ ---
 -- 設定がリロードされた時にログ（Ctrl+Shift+Lで表示）を出力する
 wezterm.on("window-config-reloaded", function(window, _)
