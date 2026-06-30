@@ -208,11 +208,11 @@ wezterm.on("window-config-reloaded", function(window, _)
 	wezterm.log_info("the config was reloaded for this window!")
 end)
 
--- シェルで `nvim` と打つと別タブで開く（WSL 用）
--- WSL からは wezterm cli が mux に到達できずハングするため、シェル側(shell/wezterm-nvim.sh)が
--- OSC 1337 SetUserVar=claude_open_nvim=<base64> を emit し、GUI 側のここで新規タブを起動する。
--- WSL ドメインを参照するため Windows ホストでのみ登録する。
-if wezterm.target_triple:find("windows") then
+-- シェルで `nvim` と打つと別タブで開く（WSL/macOS 用）
+-- WSL からは wezterm cli が mux に到達できずハングするため、macOS でも統一して
+-- シェル側(shell/wezterm-nvim.sh)が OSC 1337 SetUserVar=claude_open_nvim=<base64> を emit し、
+-- GUI 側のここで新規タブを起動する。Linux ネイティブは wezterm cli spawn を使うため不要。
+if wezterm.target_triple:find("windows") or wezterm.target_triple:find("darwin") then
 	wezterm.on("user-var-changed", function(window, _pane, name, value)
 		if name ~= "claude_open_nvim" then
 			return
@@ -231,9 +231,13 @@ if wezterm.target_triple:find("windows") then
 			end
 		end
 
-		local spawn = { args = args, domain = { DomainName = "WSL:Ubuntu-24.04" } }
+		local spawn = { args = args }
 		if cwd and cwd ~= "" then
 			spawn.cwd = cwd
+		end
+		-- WSL ではドメインを明示する。macOS はデフォルト（ローカル継承）でよい
+		if wezterm.target_triple:find("windows") then
+			spawn.domain = { DomainName = "WSL:Ubuntu-24.04" }
 		end
 		local ok, tab = pcall(function()
 			return window:mux_window():spawn_tab(spawn)
