@@ -4,7 +4,7 @@
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "language": "japanese",
-  "advisorModel": "fable",
+  "advisorModel": "opus",
   "enableWorkflows": true,
   "hooks": {
     "Stop": [
