@@ -224,7 +224,17 @@ if wezterm.target_triple:find("windows") or wezterm.target_triple:find("darwin")
 		end
 		table.remove(lines, 1) -- nonce を捨てる
 		local cwd = table.remove(lines, 1)
-		local args = { "nvim" }
+
+		local args
+		if wezterm.target_triple:find("darwin") then
+			-- macOS: GUIアプリ(WezTerm.app)は最小PATH("/usr/bin:/bin:/usr/sbin:/sbin")で
+			-- 起動されるため、Homebrew版nvim(/opt/homebrew/bin等)がPATH上に見つからない。
+			-- ログインシェル経由で起動し、.zprofile等でPATHを解決させてからnvimをexecする。
+			-- "$@" を使うことで、ファイル名にスペースを含む場合もシェルクォート不要で渡せる。
+			args = { "/bin/zsh", "-l", "-c", 'exec nvim "$@"', "zsh" }
+		else
+			args = { "nvim" }
+		end
 		for _, f in ipairs(lines) do
 			if f ~= "" then
 				table.insert(args, f)
