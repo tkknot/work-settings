@@ -25,15 +25,18 @@ config.window_background_opacity = 0.85
 config.window_decorations = "RESIZE"
 
 -- --- タブバーの配色 ---
-config.colors = {
-	tab_bar = {
-		-- アクティブな（現在開いている）タブの色設定
-		active_tab = {
-			bg_color = "#7aa2f7", -- 背景色（明るい青）
-			fg_color = "#1f2335", -- 文字色（濃い紺）
-			intensity = "Bold", -- 太字
-		},
+-- 背景色オーバーライド（set_config_overrides）は config.colors を丸ごと置き換えるため、
+-- オーバーライド側からも参照できるよう local に切り出しておく
+local tab_bar_colors = {
+	-- アクティブな（現在開いている）タブの色設定
+	active_tab = {
+		bg_color = "#7aa2f7", -- 背景色（明るい青）
+		fg_color = "#1f2335", -- 文字色（濃い紺）
+		intensity = "Bold", -- 太字
 	},
+}
+config.colors = {
+	tab_bar = tab_bar_colors,
 }
 
 -- --- OS固有の設定 ---
@@ -57,20 +60,8 @@ config.use_ime = true
 -- リーダーキー（Ctrl+b）。LEADER を前置するキーバインドで使用する
 config.leader = { key = "b", mods = "CTRL", timeout_milliseconds = 1000 }
 
-config.keys = {
-	{
-		key = "E",
-		mods = "CTRL|SHIFT",
-		action = wezterm.action.PromptInputLine({
-			description = "Enter new tab title",
-			action = wezterm.action_callback(function(window, _, line)
-				if line then
-					window:active_tab():set_title(line)
-				end
-			end),
-		}),
-	},
-}
+-- ※ Ctrl+Shift+E（タブ名変更）は prompt_tab_color 定義後に追加する
+config.keys = {}
 
 -- Windows向けにCtrl+C/Ctrl+Vでコピー＆ペーストできるようにする
 if wezterm.target_triple:find("windows") then
@@ -155,6 +146,25 @@ local function prompt_tab_color(window, pane)
 	)
 end
 
+-- Ctrl+Shift+E : タブ名変更（名前入力 → 色選択）
+-- Esc でキャンセルした場合は名前変更も色選択もスキップする
+table.insert(config.keys, {
+	key = "E",
+	mods = "CTRL|SHIFT",
+	action = act.PromptInputLine({
+		description = "Enter new tab title",
+		action = wezterm.action_callback(function(window, pane, line)
+			if not line then
+				return
+			end
+			if line ~= "" then
+				window:active_tab():set_title(line)
+			end
+			prompt_tab_color(window, pane)
+		end),
+	}),
+})
+
 -- 新規タブを開き、名前入力 → 色選択の順にプロンプトを出す
 -- どちらも未入力（空欄 / Esc）ならデフォルトのまま
 local new_tab_with_prompt = wezterm.action_callback(function(window, _)
@@ -187,6 +197,52 @@ if wezterm.target_triple:find("darwin") then
 		action = new_tab_with_prompt,
 	})
 end
+
+-- --- 背景色の変更（Ctrl+Shift+B） ---
+-- タブ色パレットを流用し、末尾に「デフォルトに戻す」を追加した選択肢を作る
+local background_color_choices = {}
+for _, choice in ipairs(tab_color_choices) do
+	table.insert(background_color_choices, choice)
+end
+table.insert(background_color_choices, { id = "default", label = "デフォルトに戻す" })
+
+-- 背景色をウィンドウのオーバーライドとして適用する。color が nil ならデフォルト
+-- （カラースキームの背景色）に戻す。選択した色は wezterm.GLOBAL に保存し、
+-- 設定リロード時に再適用する（WezTerm 終了で破棄され、次回起動時はデフォルトに戻る）
+local function apply_background_color(window, color)
+	wezterm.GLOBAL.background_color = color
+	local overrides = window:get_config_overrides() or {}
+	local current = overrides.colors and overrides.colors.background
+	-- set_config_overrides は window-config-reloaded を再発火させるため、
+	-- 適用済みの色と同じ場合は何もしない（無限ループ防止）
+	if current == color then
+		return
+	end
+	if color then
+		-- overrides.colors は config.colors を丸ごと置き換えるため tab_bar も含める
+		overrides.colors = { background = color, tab_bar = tab_bar_colors }
+	else
+		overrides.colors = nil
+	end
+	window:set_config_overrides(overrides)
+end
+
+table.insert(config.keys, {
+	key = "B",
+	mods = "CTRL|SHIFT",
+	action = act.InputSelector({
+		title = "背景色を選択（Esc でキャンセル）",
+		choices = background_color_choices,
+		action = wezterm.action_callback(function(win, _, id, _)
+			-- Esc でキャンセルした場合 id は nil → 現在の背景色のまま
+			if id == "default" then
+				apply_background_color(win, nil)
+			elseif id then
+				apply_background_color(win, id)
+			end
+		end),
+	}),
+})
 
 -- LEADER+z : 直前のコマンドと出力をコピー（OSC 133 セマンティックゾーンを使用）
 -- ※ シェル統合(OSC 133)が必要。sync_shell.sh で ~/.bashrc に導入する
@@ -245,6 +301,10 @@ table.insert(config.keys, {
 -- 設定がリロードされた時にログ（Ctrl+Shift+Lで表示）を出力する
 wezterm.on("window-config-reloaded", function(window, _)
 	wezterm.log_info("the config was reloaded for this window!")
+	-- 選択済みの背景色があれば再適用する（新規ウィンドウ作成時にも発火する）
+	if wezterm.GLOBAL.background_color then
+		apply_background_color(window, wezterm.GLOBAL.background_color)
+	end
 end)
 
 -- タブ作成時に選択した色でタブを描画する（文字色は白固定）
