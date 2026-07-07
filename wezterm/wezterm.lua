@@ -106,17 +106,6 @@ if wezterm.target_triple:find("windows") then
 	split_cwd = "/home/kazuki"
 end
 
--- Ctrl+Shift+4 : 2x2 の田の字
-table.insert(config.keys, {
-	key = "phys:4",
-	mods = "CTRL|SHIFT",
-	action = wezterm.action_callback(function(_, pane)
-		-- 右に分割して右ペインを取得 → 左右それぞれを下に分割し 2x2 を作る
-		local right = pane:split({ direction = "Right", size = 0.5, cwd = split_cwd })
-		pane:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
-		right:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
-	end),
-})
 -- Ctrl+Shift+2 : 左右 2 分割（縦線）
 table.insert(config.keys, {
 	key = "phys:2",
