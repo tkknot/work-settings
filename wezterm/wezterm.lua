@@ -96,25 +96,6 @@ if wezterm.target_triple:find("windows") then
 	})
 end
 
--- macOS向けにCMD+Tも同様に設定
-if wezterm.target_triple:find("darwin") then
-	table.insert(config.keys, {
-		key = "t",
-		mods = "CMD",
-		action = wezterm.action.PromptInputLine({
-			description = "Enter new tab title",
-			action = wezterm.action_callback(function(window, pane, line)
-				if line then
-					local tab, _ = window:mux_window():spawn_tab({
-						cwd = "~",
-					})
-					tab:set_title(line)
-				end
-			end),
-		}),
-	})
-end
-
 -- --- ペイン分割レイアウト ---
 -- 数字キーは Shift 併用でシフト記号に化けるため、レイアウト非依存の phys: 表記で指定する
 -- WSL(Windows) では分割時に cwd が /mnt/c/... へフォールバックするため、WSL ホームを明示する
@@ -125,29 +106,102 @@ if wezterm.target_triple:find("windows") then
 	split_cwd = "/home/kazuki"
 end
 
--- Ctrl+Shift+4 : 2x2 の田の字
-table.insert(config.keys, {
-	key = "phys:4",
-	mods = "CTRL|SHIFT",
-	action = wezterm.action_callback(function(_, pane)
-		-- 右に分割して右ペインを取得 → 左右それぞれを下に分割し 2x2 を作る
-		local right = pane:split({ direction = "Right", size = 0.5, cwd = split_cwd })
-		pane:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
-		right:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
-	end),
-})
+-- ペイン分割は 1 タブあたり 2 つまでに制限する
+local function split_pane_limited(direction)
+	return wezterm.action_callback(function(window, pane)
+		local tab = window:active_tab()
+		if #tab:panes() >= 2 then
+			window:set_right_status("⚠ ペイン分割は2つまで")
+			wezterm.time.call_after(3, function()
+				window:set_right_status("")
+			end)
+			return
+		end
+		pane:split({ direction = direction, size = 0.5, cwd = split_cwd })
+	end)
+end
+
 -- Ctrl+Shift+2 : 左右 2 分割（縦線）
 table.insert(config.keys, {
 	key = "phys:2",
 	mods = "CTRL|SHIFT",
-	action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain", cwd = split_cwd }),
+	action = split_pane_limited("Right"),
 })
 -- Ctrl+Shift+3 : 上下 2 分割（横線）
 table.insert(config.keys, {
 	key = "phys:3",
 	mods = "CTRL|SHIFT",
-	action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain", cwd = split_cwd }),
+	action = split_pane_limited("Bottom"),
 })
+
+-- --- 新規タブ（名前入力 → 色選択） ---
+-- 白文字に映える濃色パレット。id に背景色の hex を持たせる
+local tab_color_choices = {
+	{ id = "#3d59a1", label = "ブルー" },
+	{ id = "#7847bd", label = "パープル" },
+	{ id = "#1a7a6e", label = "ティール" },
+	{ id = "#2e7d32", label = "グリーン" },
+	{ id = "#c62828", label = "レッド" },
+	{ id = "#d84315", label = "オレンジ" },
+	{ id = "#ad1457", label = "マゼンタ" },
+	{ id = "#546e7a", label = "グレー" },
+}
+
+-- タブごとの色は tab_id をキーに wezterm.GLOBAL へ保存する（設定リロード後も保持される）
+local function set_tab_color(tab_id, color)
+	local colors = wezterm.GLOBAL.tab_colors or {}
+	colors[tostring(tab_id)] = color
+	wezterm.GLOBAL.tab_colors = colors
+end
+
+local function prompt_tab_color(window, pane)
+	window:perform_action(
+		act.InputSelector({
+			title = "タブの色を選択（Esc でデフォルト）",
+			choices = tab_color_choices,
+			action = wezterm.action_callback(function(win, _, id, _)
+				-- Esc でキャンセルした場合 id は nil → デフォルト色のまま
+				if id then
+					set_tab_color(win:active_tab():tab_id(), id)
+				end
+			end),
+		}),
+		pane
+	)
+end
+
+-- 新規タブを開き、名前入力 → 色選択の順にプロンプトを出す
+-- どちらも未入力（空欄 / Esc）ならデフォルトのまま
+local new_tab_with_prompt = wezterm.action_callback(function(window, _)
+	local _, new_pane = window:mux_window():spawn_tab({ cwd = split_cwd })
+	window:perform_action(
+		act.PromptInputLine({
+			description = "新しいタブの名前を入力（空欄でデフォルト）",
+			action = wezterm.action_callback(function(win, p, line)
+				if line and line ~= "" then
+					win:active_tab():set_title(line)
+				end
+				prompt_tab_color(win, p)
+			end),
+		}),
+		new_pane
+	)
+end)
+
+-- Ctrl+Shift+T（デフォルトの SpawnTab を置き換え）
+table.insert(config.keys, {
+	key = "t",
+	mods = "CTRL|SHIFT",
+	action = new_tab_with_prompt,
+})
+-- macOS では CMD+T でも同じ動作にする
+if wezterm.target_triple:find("darwin") then
+	table.insert(config.keys, {
+		key = "t",
+		mods = "CMD",
+		action = new_tab_with_prompt,
+	})
+end
 
 -- LEADER+z : 直前のコマンドと出力をコピー（OSC 133 セマンティックゾーンを使用）
 -- ※ シェル統合(OSC 133)が必要。sync_shell.sh で ~/.bashrc に導入する
@@ -206,6 +260,29 @@ table.insert(config.keys, {
 -- 設定がリロードされた時にログ（Ctrl+Shift+Lで表示）を出力する
 wezterm.on("window-config-reloaded", function(window, _)
 	wezterm.log_info("the config was reloaded for this window!")
+end)
+
+-- タブ作成時に選択した色でタブを描画する（文字色は白固定）
+-- 色未選択のタブは nil を返してデフォルト描画（config.colors.tab_bar）に任せる
+wezterm.on("format-tab-title", function(tab)
+	local colors = wezterm.GLOBAL.tab_colors or {}
+	local color = colors[tostring(tab.tab_id)]
+	if not color then
+		return nil
+	end
+	local title = tab.tab_title
+	if not title or title == "" then
+		title = tab.active_pane.title
+	end
+	local items = {
+		{ Background = { Color = color } },
+		{ Foreground = { Color = "#ffffff" } },
+	}
+	if tab.is_active then
+		table.insert(items, { Attribute = { Intensity = "Bold" } })
+	end
+	table.insert(items, { Text = " " .. title .. " " })
+	return items
 end)
 
 -- シェルで `nvim` と打つと別タブで開く（WSL/macOS 用）
