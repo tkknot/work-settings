@@ -123,7 +123,15 @@ local tab_color_choices = {
 	{ id = "#546e7a", label = "グレー" },
 }
 
+-- タブ色の選択肢にデフォルト（色指定を解除して既定の描画に戻す）を加えたもの
+local tab_color_choices_with_default = {}
+for _, choice in ipairs(tab_color_choices) do
+	table.insert(tab_color_choices_with_default, choice)
+end
+table.insert(tab_color_choices_with_default, { id = "default", label = "デフォルト" })
+
 -- タブごとの色は tab_id をキーに wezterm.GLOBAL へ保存する（設定リロード後も保持される）
+-- color が nil の場合は色指定を解除する
 local function set_tab_color(tab_id, color)
 	local colors = wezterm.GLOBAL.tab_colors or {}
 	colors[tostring(tab_id)] = color
@@ -133,11 +141,13 @@ end
 local function prompt_tab_color(window, pane)
 	window:perform_action(
 		act.InputSelector({
-			title = "タブの色を選択（Esc でデフォルト）",
-			choices = tab_color_choices,
+			title = "タブの色を選択（Esc でキャンセル）",
+			choices = tab_color_choices_with_default,
 			action = wezterm.action_callback(function(win, _, id, _)
-				-- Esc でキャンセルした場合 id は nil → デフォルト色のまま
-				if id then
+				-- Esc でキャンセルした場合 id は nil → 現在の色のまま
+				if id == "default" then
+					set_tab_color(win:active_tab():tab_id(), nil)
+				elseif id then
 					set_tab_color(win:active_tab():tab_id(), id)
 				end
 			end),
@@ -197,6 +207,16 @@ if wezterm.target_triple:find("darwin") then
 		action = new_tab_with_prompt,
 	})
 end
+
+-- タブバーの＋ボタン（左クリック）でも同じ動作（名前入力 → 色選択）にする
+-- false を返すと既定のタブ作成がキャンセルされる。左クリック以外は既定動作に任せる
+wezterm.on("new-tab-button-click", function(window, pane, button, _)
+	if button == "Left" then
+		window:perform_action(new_tab_with_prompt, pane)
+		return false
+	end
+	return true
+end)
 
 -- --- 背景色の変更（Ctrl+Shift+B） ---
 -- タブ色パレットを流用し、末尾に「デフォルトに戻す」を追加した選択肢を作る
