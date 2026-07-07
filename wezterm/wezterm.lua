@@ -106,32 +106,28 @@ if wezterm.target_triple:find("windows") then
 	split_cwd = "/home/kazuki"
 end
 
--- ペイン分割は 1 タブあたり 2 つまでに制限する
-local function split_pane_limited(direction)
-	return wezterm.action_callback(function(window, pane)
-		local tab = window:active_tab()
-		if #tab:panes() >= 2 then
-			window:set_right_status("⚠ ペイン分割は2つまで")
-			wezterm.time.call_after(3, function()
-				window:set_right_status("")
-			end)
-			return
-		end
-		pane:split({ direction = direction, size = 0.5, cwd = split_cwd })
-	end)
-end
-
+-- Ctrl+Shift+4 : 2x2 の田の字
+table.insert(config.keys, {
+	key = "phys:4",
+	mods = "CTRL|SHIFT",
+	action = wezterm.action_callback(function(_, pane)
+		-- 右に分割して右ペインを取得 → 左右それぞれを下に分割し 2x2 を作る
+		local right = pane:split({ direction = "Right", size = 0.5, cwd = split_cwd })
+		pane:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
+		right:split({ direction = "Bottom", size = 0.5, cwd = split_cwd })
+	end),
+})
 -- Ctrl+Shift+2 : 左右 2 分割（縦線）
 table.insert(config.keys, {
 	key = "phys:2",
 	mods = "CTRL|SHIFT",
-	action = split_pane_limited("Right"),
+	action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain", cwd = split_cwd }),
 })
 -- Ctrl+Shift+3 : 上下 2 分割（横線）
 table.insert(config.keys, {
 	key = "phys:3",
 	mods = "CTRL|SHIFT",
-	action = split_pane_limited("Bottom"),
+	action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain", cwd = split_cwd }),
 })
 
 -- --- 新規タブ（名前入力 → 色選択） ---
