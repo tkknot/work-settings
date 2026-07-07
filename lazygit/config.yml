@@ -1,0 +1,12 @@
+# lazygit 設定
+# https://github.com/jesseduffield/lazygit/blob/master/docs/Config.md
+git:
+  paging:
+    # delta 使用時に必須（git に色付き出力をさせて delta に渡す）
+    colorArg: always
+    # delta (git-delta) で diff preview に行番号を表示する
+    # 要インストール: cargo install git-delta / apt install git-delta / brew install git-delta
+    pager: delta --dark --paging=never --line-numbers
+  # 変更箇所の前後に表示するコンテキスト行数（デフォルト3）
+  # lazygit 内では { / } キーで一時的に増減できる
+  diffContextSize: 10
