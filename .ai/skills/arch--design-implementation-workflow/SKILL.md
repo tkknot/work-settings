@@ -79,7 +79,7 @@ description: 設計・実装プロセスの進め方ガイド（設計レビュ�
 
 **目的**: 動くコードを「読みやすいコード」に仕上げる
 
-**AIのタスク**: `quality--refactor` スキルで最終整理
+**AIのタスク**: `pr-review-toolkit` プラグインの `code-simplifier` エージェントで最終整理
 
 確認項目:
 - 関数・メソッドの長さ（目安: 20行以内）
@@ -108,5 +108,5 @@ description: 設計・実装プロセスの進め方ガイド（設計レビュ�
 | スキル | 用途 |
 |--------|------|
 | `test--tdd` | TDDサイクルの支援 |
-| `quality--refactor` | コードリファクタリング |
+| `code-simplifier`（プラグインのエージェント） | コードリファクタリング |
 | `/pr-review-toolkit:review-pr`（プラグイン） | PRのコードレビュー |
