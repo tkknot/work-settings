@@ -93,7 +93,7 @@ description: 設計・実装プロセスの進め方ガイド（設計レビュ�
 
 **目的**: 完成物がすべての基準を満たすか確認してマージ判断を下す
 
-**AIのタスク**: `review--code-review` スキルでPR差分を自動レビュー
+**AIのタスク**: `pr-review-toolkit` プラグインの `/pr-review-toolkit:review-pr` コマンドでPR差分を自動レビュー
 
 **人間の確認項目**:
 - 完成したコードが要件を満たすか
@@ -109,4 +109,4 @@ description: 設計・実装プロセスの進め方ガイド（設計レビュ�
 |--------|------|
 | `test--tdd` | TDDサイクルの支援 |
 | `quality--refactor` | コードリファクタリング |
-| `review--code-review` | PRのコードレビュー |
+| `/pr-review-toolkit:review-pr`（プラグイン） | PRのコードレビュー |
