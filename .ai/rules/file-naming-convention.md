@@ -16,7 +16,6 @@
 |---|---|---|---|
 | `test--` | テスト | TDD, E2E, テストケース設計 | `test--tdd/SKILL.md` |
 | `git--` | Git/ワークフロー | ブランチ管理, PR, worktree | `git--branch-summary/SKILL.md` |
-| `review--` | レビュー | コードレビュー, PRレビュー | `review--code-review/SKILL.md` |
 | `quality--` | コード品質 | リファクタリング | `quality--refactor/SKILL.md` |
 | `arch--` | アーキテクチャ | システム設計, 技術選定 | `arch--design-implementation-workflow/SKILL.md` |
 | `devenv--` | 開発環境 | devcontainer | `devenv--devcontainer-cli/SKILL.md` |
