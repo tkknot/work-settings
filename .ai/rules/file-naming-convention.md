@@ -25,6 +25,7 @@
 | `team--` | エージェント・チームセッション管理 | 協調編成モード | `team--session/SKILL.md` |
 | `format--` | フォーマット変換 | テキスト整形, 記法変換, フォーマット統一 | `format--backlog-notation/SKILL.md` |
 | `security--` | セキュリティ | Dependabotアラート対応, 脆弱性スキャン | `security--dependabot-workflow/SKILL.md` |
+| `check--` | 事前チェック | 機能撤去・文言影響範囲チェック, PR前チェック | `check--removal-impact/SKILL.md` |
 
 ## ルール
 
