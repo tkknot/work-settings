@@ -104,7 +104,7 @@ TC-001,正常ログイン,1.ログイン画面を開く...,email:test@example.co
 | データドリブンなパターン | 探索的テスト |
 | CI/CDに組み込む一般フロー | 環境依存の操作 |
 
-**AIのタスク**: `test--e2e-testing` スキルでPlaywrightコード生成
+**AIのタスク**: Playwrightスクリプトとして実装（コマンド・API詳細は context7 MCP で最新ドキュメントを参照）
 ```
 例: 「TC-001〜TC-003をPlaywrightのE2Eテストとして実装してください」
 ```
@@ -128,4 +128,3 @@ TC-001,正常ログイン,1.ログイン画面を開く...,email:test@example.co
 | スキル | 用途 |
 |--------|------|
 | `test--test-case-design` | テストシナリオとケースの設計支援 |
-| `test--e2e-testing` | E2Eテストコードの生成と実行 |
