@@ -22,6 +22,7 @@
 | `format--` | フォーマット変換 | テキスト整形, 記法変換, フォーマット統一 | `format--backlog-notation/SKILL.md` |
 | `security--` | セキュリティ | Dependabotアラート対応, 脆弱性スキャン | `security--dependabot-workflow/SKILL.md` |
 | `check--` | 事前チェック | 機能撤去・文言影響範囲チェック, PR前チェック | `check--removal-impact/SKILL.md` |
+| `review--` | レビュー | クロスレビュー, レビュー自動化, 反復レビュー | `review--cross-review/SKILL.md` |
 | `meta--` | エージェント設定自体 | スキル一覧・カタログ化など `.claude/` 自身を対象とした操作 | `meta--skill-catalog/SKILL.md` |
 
 ## ルール
