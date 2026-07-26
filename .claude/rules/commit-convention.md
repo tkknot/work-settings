@@ -37,9 +37,9 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## 注意
 
 - subject は**日本語**で簡潔に。`why` は本文に書く。
-- PR 本文は別ルール（AI 署名を付けない）。詳細は `.ai/skills/git--create-pull-request/SKILL.md` を参照。
-- 秘密情報を含めない: `.ai/rules/security-baseline.md`
+- PR 本文は別ルール（AI 署名を付けない）。詳細は `.claude/skills/git--create-pull-request/SKILL.md` を参照。
+- 秘密情報を含めない: `.claude/rules/security-baseline.md`
 
 ## 関連
 
-- ファイル命名規約: `.ai/rules/file-naming-convention.md`
+- ファイル命名規約: `.claude/rules/file-naming-convention.md`

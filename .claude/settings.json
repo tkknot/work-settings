@@ -27,7 +27,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.ai/hooks/claude-notify.sh\""
+            "command": "bash \"$HOME/.claude/hooks/claude-notify.sh\""
           }
         ]
       }

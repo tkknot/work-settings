@@ -1,3 +1,6 @@
 # 会社環境用の作業ファイル（メモ、スクラッチコード等）を無視する
 # 例: _local.notes.md, _local.scratch.py, _local.todo.txt
 _local.*
+
+# マシンローカルな Claude Code 権限設定（コミットしない）
+.claude/settings.local.json
