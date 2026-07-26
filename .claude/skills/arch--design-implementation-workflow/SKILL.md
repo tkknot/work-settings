@@ -61,7 +61,7 @@ description: 設計・実装プロセスの進め方ガイド（設計レビュ�
 
 **目的**: テストファーストで品質を確保しながら実装する
 
-**TDD可能な場合**: `test--tdd` スキルでRed-Green-Refactorサイクル
+**TDD可能な場合**: Red-Green-Refactorサイクルで進める
 
 ```
 🔴 Red   → 失敗するテストを書く
@@ -107,6 +107,5 @@ description: 設計・実装プロセスの進め方ガイド（設計レビュ�
 
 | スキル | 用途 |
 |--------|------|
-| `test--tdd` | TDDサイクルの支援 |
 | `code-simplifier`（プラグインのエージェント） | コードリファクタリング |
 | `/pr-review-toolkit:review-pr`（プラグイン） | PRのコードレビュー |
