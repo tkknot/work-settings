@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Apply a staging payload to a target repo working tree.
-# Overwrites AGENTS.md, .mcp.json;
+# Overwrites CLAUDE.md, .mcp.json;
 # For .claude/, uses add/update-only rsync (no --delete) so
 # that files unique to the target repo (not managed by work-settings) are
 # preserved.
@@ -24,9 +24,9 @@ if [ ! -d "$TARGET" ]; then
   exit 1
 fi
 
-# AGENTS.md (root)
-if [ -f "$PAYLOAD/AGENTS.md" ]; then
-  cp "$PAYLOAD/AGENTS.md" "$TARGET/AGENTS.md"
+# CLAUDE.md (root)
+if [ -f "$PAYLOAD/CLAUDE.md" ]; then
+  cp "$PAYLOAD/CLAUDE.md" "$TARGET/CLAUDE.md"
 fi
 
 # .claude/ : add/update only (preserves target-only files)

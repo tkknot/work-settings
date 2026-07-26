@@ -12,22 +12,21 @@ fi
 SRC="$1"
 OUT="$2"
 
-if [ ! -d "$SRC/.ai" ]; then
-  echo "error: $SRC/.ai does not exist" >&2
+if [ ! -d "$SRC/.claude" ]; then
+  echo "error: $SRC/.claude does not exist" >&2
   exit 1
 fi
 
 mkdir -p "$OUT"
 
-# agent: AGENTS.md -> target root
-cp "$SRC/AGENTS.md" "$OUT/AGENTS.md"
+# CLAUDE.md -> target root
+cp "$SRC/CLAUDE.md" "$OUT/CLAUDE.md"
 
-# claude: .ai/ content -> .claude/ + settings.json
+# claude: .claude/ content -> .claude/
 mkdir -p "$OUT/.claude"
-rsync -a "$SRC/.ai/" "$OUT/.claude/"
-cp "$SRC/.claude/settings.json" "$OUT/.claude/settings.json"
+rsync -a --exclude='settings.local.json' "$SRC/.claude/" "$OUT/.claude/"
 
 # .mcp.json: project-level MCP config for Claude Code at repo root
-cp "$SRC/.ai/mcp.json" "$OUT/.mcp.json"
+cp "$SRC/.claude/mcp.json" "$OUT/.mcp.json"
 
 echo "payload built at $OUT"

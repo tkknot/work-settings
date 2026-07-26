@@ -6,9 +6,8 @@ on:
       - main
       - master
     paths:
-      - 'AGENTS.md'
-      - '.ai/**'
-      - '.claude/settings.json'
+      - 'CLAUDE.md'
+      - '.claude/**'
       - '.github/workflows/distribute-settings.yml'
       - '.github/workflows/scripts/**'
   workflow_dispatch:
@@ -155,8 +154,8 @@ jobs:
             - Base branch: `${{ steps.base.outputs.branch }}`
 
             ## 配布内容
-            - `AGENTS.md` (root)
-            - `.claude/` (commands, rules, skills, mcp.json, playwright-config.json, settings.json)
+            - `CLAUDE.md` (root)
+            - `.claude/` (commands, rules, skills, hooks, mcp.json, playwright-config.json, settings.json)
             - `.mcp.json` (root)
 
             ## Notes
