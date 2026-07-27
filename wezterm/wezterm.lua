@@ -133,6 +133,14 @@ local tab_color_choices = {
 	{ id = "#6d4c41", label = "ブラウン" },
 	{ id = "#8e1e46", label = "ワイン" },
 	{ id = "#37474f", label = "チャコール" },
+	{ id = "#7b1fa2", label = "バイオレット" },
+	{ id = "#6f5b9e", label = "ラベンダー" },
+	{ id = "#b03a5b", label = "ローズ" },
+	{ id = "#a1441f", label = "テラコッタ" },
+	{ id = "#8d6e63", label = "モカ" },
+	{ id = "#6b6b23", label = "オリーブ" },
+	{ id = "#33691e", label = "フォレスト" },
+	{ id = "#4a6b57", label = "セージ" },
 }
 
 -- タブ色の選択肢にデフォルト（色指定を解除して既定の描画に戻す）を加えたもの
