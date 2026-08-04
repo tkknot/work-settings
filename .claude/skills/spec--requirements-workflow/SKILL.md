@@ -112,3 +112,4 @@ spec--backlog-integration スキルの清書テンプレートを参照し、
 | スキル | 用途 |
 |--------|------|
 | `spec--backlog-integration` | Backlog MCPツール・要約テンプレート・清書テンプレート |
+| `review--doc-cross-review` | Step 4 の総点検を深掘りする反復クロスレビュー（codex × 観点別サブエージェント） |
