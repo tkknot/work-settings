@@ -1,11 +1,11 @@
 ---
 name: review--cross-review
-description: codex と pr-review-toolkit を交互に走らせ、指摘が枯れるまで反復クロスレビューするスキル
+description: codex と pr-review-toolkit を交互に走らせ、コード差分の指摘が枯れるまで反復クロスレビューするスキル
 ---
 
 # クロスレビュー（codex × pr-review-toolkit）
 
-OpenAI Codex と Claude の `pr-review-toolkit` プラグインを交互にぶつけ、片方が見落とした指摘をもう片方が拾う反復レビューを行うガイドです。
+OpenAI Codex と Claude の `pr-review-toolkit` プラグインを交互にぶつけ、片方が見落とした指摘をもう片方が拾う反復レビューを行うガイドです。**対象はコード差分**です。要件定義書・仕様書などの非コード文書には `review--doc-cross-review` を使ってください。
 
 **重量級ワークフロー**: 1ラウンドあたり codex 1回 + サブエージェント最大6体を消費します。ラウンド数がそのまま費用に比例するため、ラウンド数は固定値ではなく**差分の規模とリスクから Step 3 で算出し、実行前にユーザーの承認を取る**（ラウンド数に上限は設けず、コストの歯止めはこの承認が担う）。小さな差分には単発の `/pr-review-toolkit:review-pr` で十分で、Step 3 の判定が「0 ラウンド」になった場合はそちらへ誘導して終了します。差分が大きい・複数モジュールにまたがる・レビュー品質を特に上げたい場合に使ってください。
 
@@ -203,6 +203,7 @@ Critical / Important のみ Claude が修正する。Suggestion は見送りリ�
 
 | スキル / プラグイン | 用途 |
 |--------|------|
+| `review--doc-cross-review` | **非コード文書**の反復クロスレビュー（`pr-review-toolkit` を使わない版） |
 | `arch--design-implementation-workflow` | 設計・実装フローの中の単発レビュー（本スキルは反復クロスレビュー） |
 | `/pr-review-toolkit:review-pr`（プラグイン） | 単発の PR レビュー。小さな差分はこちらで十分 |
 | `pr-review-toolkit:code-simplifier`（プラグインのエージェント） | 最終ラウンドの整理提案（自動適用はしない） |
