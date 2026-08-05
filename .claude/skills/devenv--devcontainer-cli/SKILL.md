@@ -1,6 +1,7 @@
 ---
 name: devenv--devcontainer-cli
 description: devcontainer CLIを使用してDev Container環境の作成・起動・管理・実行などの操作を行うスキル
+argument-hint: "[プロジェクトパス]"
 ---
 
 # Devcontainer CLI スキル

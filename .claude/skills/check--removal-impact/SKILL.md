@@ -1,6 +1,7 @@
 ---
 name: check--removal-impact
 description: 機能撤去時の文言・コード影響範囲を横断チェックし仕分けチェックリストを生成するガイド
+argument-hint: "[撤去対象のキーワード]"
 ---
 
 # 機能撤去・文言影響範囲チェック

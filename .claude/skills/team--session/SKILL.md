@@ -1,6 +1,7 @@
 ---
 name: team--session
 description: このセッション以降の作業をAgent Teamsで行うモードに切り替えるスキル
+argument-hint: "[タスク内容]"
 ---
 
 # Agent Teams セッションモード

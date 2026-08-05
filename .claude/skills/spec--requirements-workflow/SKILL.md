@@ -1,6 +1,7 @@
 ---
 name: spec--requirements-workflow
 description: 要件定義プロセスの進め方ガイド（Backlog連携・レビュー・清書）
+argument-hint: "[課題キー|テーマ]"
 ---
 
 # 要件定義ワークフロー

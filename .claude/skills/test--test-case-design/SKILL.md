@@ -1,6 +1,7 @@
 ---
 name: test--test-case-design
 description: 包括的で効果的なテストケースを設計・作成するためのスキル
+argument-hint: "[対象機能]"
 ---
 
 # テストケース設計スキル

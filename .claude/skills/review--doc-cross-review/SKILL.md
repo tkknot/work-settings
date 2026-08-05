@@ -1,6 +1,7 @@
 ---
 name: review--doc-cross-review
 description: 要件定義書・仕様書などの非コード文書を、codex と観点別サブエージェントで反復クロスレビューするスキル
+argument-hint: "[対象ファイル...] [ラウンド数]"
 ---
 
 # 文書クロスラウンドレビュー（codex × 観点別サブエージェント）
