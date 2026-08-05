@@ -1,6 +1,7 @@
 ---
 name: test--verification-workflow
 description: 検証方法作成プロセスの進め方ガイド（Backlog過去課題の参照・テスト設計・用語レビュー・E2E）
+argument-hint: "[課題キー|機能名]"
 ---
 
 # 検証方法作成ワークフロー

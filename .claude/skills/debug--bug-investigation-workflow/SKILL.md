@@ -1,6 +1,7 @@
 ---
 name: debug--bug-investigation-workflow
 description: バグ調査プロセスの進め方ガイド（現象確認・再現・原因特定・修正）
+argument-hint: "[課題キー]"
 ---
 
 # バグ調査ワークフロー

@@ -1,6 +1,7 @@
 ---
 name: format--backlog-notation
 description: ファイルの内容をBacklog記法に変換して出力するスキル
+argument-hint: "[ファイルパス]"
 ---
 
 # format-backlog-notation

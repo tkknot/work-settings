@@ -1,6 +1,7 @@
 ---
 name: spec--backlog-integration
 description: Backlog MCPツールの使い方リファレンスとテンプレート集
+argument-hint: "[課題キー|検索キーワード]"
 ---
 
 # Backlog MCP連携スキル

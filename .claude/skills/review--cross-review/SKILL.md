@@ -1,6 +1,7 @@
 ---
 name: review--cross-review
 description: codex と pr-review-toolkit を交互に走らせ、コード差分の指摘が枯れるまで反復クロスレビューするスキル
+argument-hint: "[ラウンド数]"
 ---
 
 # クロスレビュー（codex × pr-review-toolkit）
