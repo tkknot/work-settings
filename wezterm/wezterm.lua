@@ -23,6 +23,9 @@ config.font_size = 12.0
 config.window_background_opacity = 0.85
 -- ウィンドウ装飾（タイトルバーを消してリサイズのみ有効にする）
 config.window_decorations = "RESIZE"
+-- タブ名の最大幅（セル数）。既定の 16 では全角 2 セル + format-tab-title の前後空白のせいで
+-- 日本語 7 文字（例:「開発環境の調査」）が既に切り詰められるため広げる
+config.tab_max_width = 28
 
 -- --- タブバーの配色 ---
 -- 背景色オーバーライド（set_config_overrides）は config.colors を丸ごと置き換えるため、
@@ -158,17 +161,22 @@ local function set_tab_color(tab_id, color)
 	wezterm.GLOBAL.tab_colors = colors
 end
 
-local function prompt_tab_color(window, pane)
+-- 色を選び終えたら on_done(window) を呼ぶ。Esc でキャンセルした場合も
+-- （色は現在のまま据え置いて）on_done へ進む
+local function prompt_tab_color(window, pane, on_done)
 	window:perform_action(
 		act.InputSelector({
-			title = "タブの色を選択（Esc でキャンセル）",
+			title = "タブの色を選択（Esc でスキップ）",
 			choices = tab_color_choices_with_default,
-			action = wezterm.action_callback(function(win, _, id, _)
+			action = wezterm.action_callback(function(win, p, id, _)
 				-- Esc でキャンセルした場合 id は nil → 現在の色のまま
 				if id == "default" then
 					set_tab_color(win:active_tab():tab_id(), nil)
 				elseif id then
 					set_tab_color(win:active_tab():tab_id(), id)
+				end
+				if on_done then
+					on_done(win, p)
 				end
 			end),
 		}),
@@ -176,41 +184,61 @@ local function prompt_tab_color(window, pane)
 	)
 end
 
--- Ctrl+Shift+E : タブ名変更（名前入力 → 色選択）
--- Esc でキャンセルした場合は名前変更も色選択もスキップする
+-- --- タブ名の入力（日本語/IME 対応） ---
+-- WezTerm の PromptInputLine は IME の確定文字を取りこぼすため日本語を入力できない
+-- （termwiz の LineEditor が KeyCode::Char しか処理せず、IME 確定時の
+--   KeyCode::Composed(String) に対応する分岐が無い。upstream: wezterm#7173 / #5333）。
+-- 通常のペインなら IME は正常に動くので、一時的な分割ペインでシェルに read させ、
+-- 結果を OSC 1337 SetUserVar で GUI 側へ返す（nvim 別タブ起動と同じ仕組み）。
+local tab_title_input_script = [[
+trap 'exit 0' INT # Ctrl+C でも正常終了させ、exit_behavior 設定に関わらずペインを閉じる
+printf 'タブ名を入力（Enter で確定 / 空欄・Ctrl+C でキャンセル）: '
+IFS= read -r title || exit 0
+[ -z "$title" ] && exit 0
+nonce="$$-${RANDOM:-0}" # 同じ名前を連続で付けてもイベントが発火するよう nonce を付与
+b64=$(printf '%s\n%s' "$nonce" "$title" | base64 | tr -d '\n')
+printf '\033]1337;SetUserVar=wezterm_tab_title=%s\007' "$b64"
+]]
+
+-- 名前入力用の一時ペインを下に開く。read が終わればプロセスが終了しペインは自動で閉じる。
+-- 対象ペインは呼び出し元から受け取る。window:active_pane() は選択オーバーレイ自身を
+-- 返しうる（GUI レイヤのため）ので使わず、フォールバックも mux レイヤ側から取る
+local function prompt_tab_title(window, pane)
+	pane = pane or window:mux_window():active_pane()
+	if not pane then
+		return
+	end
+	-- IME の変換候補ポップアップが収まるよう 5 行確保する
+	local ok, input_pane = pcall(function()
+		return pane:split({
+			direction = "Bottom",
+			size = 5,
+			args = { "bash", "-c", tab_title_input_script },
+		})
+	end)
+	if ok and input_pane then
+		input_pane:activate()
+	else
+		-- 失敗しても画面上は「何も起きない」ため、Ctrl+Shift+L のデバッグオーバーレイに残す
+		wezterm.log_error("タブ名入力ペインの起動に失敗しました: ", input_pane)
+	end
+end
+
+-- Ctrl+Shift+E : タブ名変更（色選択 → 名前入力）
+-- 色選択で Esc なら色は変えずに名前入力へ、名前入力が空欄/Ctrl+C なら名前も変えない
 table.insert(config.keys, {
 	key = "E",
 	mods = "CTRL|SHIFT",
-	action = act.PromptInputLine({
-		description = "Enter new tab title",
-		action = wezterm.action_callback(function(window, pane, line)
-			if not line then
-				return
-			end
-			if line ~= "" then
-				window:active_tab():set_title(line)
-			end
-			prompt_tab_color(window, pane)
-		end),
-	}),
+	action = wezterm.action_callback(function(window, pane)
+		prompt_tab_color(window, pane, prompt_tab_title)
+	end),
 })
 
--- 新規タブを開き、名前入力 → 色選択の順にプロンプトを出す
--- どちらも未入力（空欄 / Esc）ならデフォルトのまま
+-- 新規タブを開き、色選択 → 名前入力の順にプロンプトを出す
+-- どちらも未入力（Esc / 空欄）ならデフォルトのまま
 local new_tab_with_prompt = wezterm.action_callback(function(window, _)
 	local _, new_pane = window:mux_window():spawn_tab({ cwd = split_cwd })
-	window:perform_action(
-		act.PromptInputLine({
-			description = "新しいタブの名前を入力（空欄でデフォルト）",
-			action = wezterm.action_callback(function(win, p, line)
-				if line and line ~= "" then
-					win:active_tab():set_title(line)
-				end
-				prompt_tab_color(win, p)
-			end),
-		}),
-		new_pane
-	)
+	prompt_tab_color(window, new_pane, prompt_tab_title)
 end)
 
 -- Ctrl+Shift+T（デフォルトの SpawnTab を置き換え）
@@ -344,6 +372,26 @@ wezterm.on("window-config-reloaded", function(window, _)
 	-- 選択済みの背景色があれば再適用する（新規ウィンドウ作成時にも発火する）
 	if wezterm.GLOBAL.background_color then
 		apply_background_color(window, wezterm.GLOBAL.background_color)
+	end
+end)
+
+-- 一時ペインで入力されたタブ名を受け取ってタブに設定する（prompt_tab_title の相方）
+-- Linux ネイティブでも使うため、後述の nvim 用ハンドラとは別に無条件で登録する
+-- （同じイベントに複数のハンドラを登録できる）
+wezterm.on("user-var-changed", function(_, pane, name, value)
+	if name ~= "wezterm_tab_title" then
+		return
+	end
+	-- value(wezterm が base64 デコード済み): "nonce\ntitle"
+	local nl = value:find("\n", 1, true)
+	local title = nl and value:sub(nl + 1) or ""
+	if title == "" then
+		return
+	end
+	-- 入力中に別タブへ切り替えられても正しいタブに付くよう、発火元ペインのタブを使う
+	local tab = pane:tab()
+	if tab then
+		tab:set_title(title)
 	end
 end)
 
