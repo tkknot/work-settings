@@ -330,6 +330,183 @@ table.insert(config.keys, { key = "j", mods = "LEADER", action = act.ActivatePan
 table.insert(config.keys, { key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") })
 table.insert(config.keys, { key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") })
 
+-- --- タブのウィンドウ間移動 ---
+-- wezterm の移動 API はペイン単位のため、分割済みタブではアクティブペインのみが移動する。
+-- 「既存ウィンドウへ移す」Lua API は未提供（wezterm#5976 は open）なので wezterm cli を経由する。
+
+-- wezterm 実行ファイルの絶対パス。
+-- macOS の GUI は最小 PATH で起動される（後述の user-var-changed ハンドラのコメント参照）ため、
+-- 裸の "wezterm" では解決できない
+local wezterm_cli = wezterm.executable_dir .. "/wezterm"
+if wezterm.target_triple:find("windows") then
+	wezterm_cli = wezterm.executable_dir .. "/wezterm.exe"
+end
+
+-- 右ステータスに一時メッセージを表示する（LEADER+z と同じ書き方）
+-- 移動によって対象ウィンドウが閉じている場合があるため pcall で包む
+local function notify(window, text)
+	pcall(function()
+		window:set_right_status(text)
+		wezterm.time.call_after(3, function()
+			pcall(function()
+				window:set_right_status("")
+			end)
+		end)
+	end)
+end
+
+-- ウィンドウ間の移動では新しいタブが作られて tab_id が変わり、タブ名も色も引き継がれない。
+-- 移動前に控えておき、移動後に復元する
+local function capture_tab_style(tab)
+	local colors = wezterm.GLOBAL.tab_colors or {}
+	return {
+		title = tab:get_title(),
+		color = colors[tostring(tab:tab_id())],
+	}
+end
+
+local function apply_tab_style(tab, style)
+	if style.title and style.title ~= "" then
+		tab:set_title(style.title)
+	end
+	if style.color then
+		set_tab_color(tab:tab_id(), style.color)
+	end
+end
+
+-- LEADER+n : 現在のタブ（アクティブペイン）を新しいウィンドウへ移す
+table.insert(config.keys, {
+	key = "n",
+	mods = "LEADER",
+	action = wezterm.action_callback(function(window, pane)
+		local tab = window:active_tab()
+		local style = capture_tab_style(tab)
+		local has_other_panes = #tab:panes() > 1
+		-- 戻り値は (MuxTab, MuxWindow)。括弧で MuxTab だけを受け取る
+		local ok, new_tab = pcall(function()
+			return (pane:move_to_new_window())
+		end)
+		if not ok or not new_tab then
+			wezterm.log_error("move_to_new_window failed: " .. tostring(new_tab))
+			notify(window, "⚠ 新しいウィンドウへ移動できませんでした")
+			return
+		end
+		apply_tab_style(new_tab, style)
+		-- 残ペインがある場合のみ元ウィンドウが生き残るので、そこへ通知を出す
+		if has_other_panes then
+			notify(window, "⚠ アクティブペインのみ移動しました")
+		end
+	end),
+})
+
+-- 移動先のタブを探して名前・色を復元し、そのタブをアクティブにする。
+-- wezterm cli は非同期に実行されるため、mux へ反映されるまで待ってから探す
+local restyle_moved_tab
+restyle_moved_tab = function(target_window_id, pane_id, style, attempt)
+	wezterm.time.call_after(0.2, function()
+		local ok, found = pcall(function()
+			for _, tab in ipairs(wezterm.mux.get_window(target_window_id):tabs()) do
+				for _, p in ipairs(tab:panes()) do
+					if p:pane_id() == pane_id then
+						return tab
+					end
+				end
+			end
+			return nil
+		end)
+		if ok and found then
+			apply_tab_style(found, style)
+			found:activate()
+			return
+		end
+		if attempt < 5 then
+			restyle_moved_tab(target_window_id, pane_id, style, attempt + 1)
+		end
+		-- 5 回試して見つからなければデフォルト描画のまま諦める（エラーにはしない）
+	end)
+end
+
+-- LEADER+m : 現在のタブ（アクティブペイン）を、すでに開いている別ウィンドウへ移す
+table.insert(config.keys, {
+	key = "m",
+	mods = "LEADER",
+	action = wezterm.action_callback(function(window, pane)
+		local current_window_id = window:mux_window():window_id()
+		-- window_decorations = "RESIZE" でウィンドウタイトルを設定していないため
+		-- MuxWindow:get_title() では見分けが付かない。アクティブタブ名とタブ数でラベルを作る
+		local choices = {}
+		for _, mux_window in ipairs(wezterm.mux.all_windows()) do
+			if mux_window:window_id() ~= current_window_id then
+				local active_tab = mux_window:active_tab()
+				local label = ""
+				if active_tab then
+					label = active_tab:get_title()
+					if label == "" then
+						label = active_tab:active_pane():get_title()
+					end
+				end
+				table.insert(choices, {
+					id = tostring(mux_window:window_id()),
+					label = string.format(
+						"Window %d: %s（%d タブ）",
+						mux_window:window_id(),
+						label,
+						#mux_window:tabs()
+					),
+				})
+			end
+		end
+		if #choices == 0 then
+			notify(window, "⚠ 移動先のウィンドウがありません")
+			return
+		end
+
+		local tab = window:active_tab()
+		local style = capture_tab_style(tab)
+		local has_other_panes = #tab:panes() > 1
+		local pane_id = pane:pane_id()
+		window:perform_action(
+			act.InputSelector({
+				title = "移動先のウィンドウを選択（Esc でキャンセル）",
+				choices = choices,
+				action = wezterm.action_callback(function(win, _, id, _)
+					-- Esc でキャンセルした場合 id は nil → 何もしない
+					if not id then
+						return
+					end
+					local target_window_id = tonumber(id)
+					local args = {
+						wezterm_cli,
+						"cli",
+						"move-pane-to-new-tab",
+						"--pane-id",
+						tostring(pane_id),
+						"--window-id",
+						tostring(target_window_id),
+					}
+					-- 実行結果は返らないため、切り分け用に argv をログへ残す
+					-- （Ctrl+Shift+L のデバッグオーバーレイで確認できる）
+					wezterm.log_info("move-pane-to-new-tab: " .. table.concat(args, " "))
+					-- run_child_process は使わない。Lua は GUI のメインスレッドで走り、
+					-- wezterm cli は同じプロセスの mux に接続するため、同期待ちするとデッドロックしうる
+					local ok, err = pcall(wezterm.background_child_process, args)
+					if not ok then
+						wezterm.log_error("move-pane-to-new-tab failed: " .. tostring(err))
+						notify(win, "⚠ 移動に失敗しました（Ctrl+Shift+L でログ確認）")
+						return
+					end
+					restyle_moved_tab(target_window_id, pane_id, style, 0)
+					-- 残ペインがある場合のみ元ウィンドウが生き残るので、そこへ通知を出す
+					if has_other_panes then
+						notify(win, "⚠ アクティブペインのみ移動しました")
+					end
+				end),
+			}),
+			pane
+		)
+	end),
+})
+
 -- Ctrl+Shift+L : デバッグオーバーレイを表示（ログ確認用）
 table.insert(config.keys, {
 	key = "L",
