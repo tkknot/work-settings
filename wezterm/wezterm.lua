@@ -38,6 +38,11 @@ local tab_bar_colors = {
 config.colors = {
 	tab_bar = tab_bar_colors,
 }
+-- タブ名の最大幅（wezterm の既定値と同じ値）。
+-- format-tab-title が FormatItems を返すと wezterm 側の切り詰めが効かなくなるため、
+-- ハンドラから参照できるよう local にも持っておく
+local tab_max_width = 16
+config.tab_max_width = tab_max_width
 
 -- --- OS固有の設定 ---
 if wezterm.target_triple:find("windows") then
@@ -524,22 +529,56 @@ wezterm.on("window-config-reloaded", function(window, _)
 	end
 end)
 
--- タブ作成時に選択した色でタブを描画する（文字色は白固定）
--- 色未選択のタブは nil を返してデフォルト描画（config.colors.tab_bar）に任せる
+-- Claude Code の実行状態をタブ名の先頭にアイコンで出す。
+-- フック(.claude/hooks/wezterm-tab-status.sh)が OSC 1337 で SetUserVar=claude_tab_status=<状態> を送り、
+-- ここではそれを読むだけ（claude_open_nvim と違いイベントハンドラは増やさない）。
+-- アイコンは wezterm 同梱の Noto Color Emoji にフォールバックするため追加のフォント設定は不要。
+-- 1 セル幅の文字（●▶✔ など）に変える場合は claude_icon_width も 2 に直すこと
+local claude_status_icons = { run = "⏳", wait = "🔔", done = "✅" }
+local claude_status_priority = { wait = 3, run = 2, done = 1 }
+local claude_icon_width = 3 -- 絵文字 2 セル + 区切りの空白 1 セル
+
+-- タブ内の全ペインを走査し、最も強い状態のアイコンを返す（分割タブでも拾えるようにする）
+local function claude_tab_icon(tab)
+	local best, best_priority = nil, 0
+	for _, pane in ipairs(tab.panes or {}) do
+		local status = (pane.user_vars or {}).claude_tab_status
+		local priority = claude_status_priority[status or ""] or 0
+		if priority > best_priority then
+			best, best_priority = status, priority
+		end
+	end
+	return best and claude_status_icons[best] or nil
+end
+
+-- タブ作成時に選択した色でタブを描画し（文字色は白固定）、Claude の状態アイコンを前置する
+-- 色もアイコンも無いタブは nil を返してデフォルト描画（config.colors.tab_bar）に任せる
 wezterm.on("format-tab-title", function(tab)
 	local colors = wezterm.GLOBAL.tab_colors or {}
 	local color = colors[tostring(tab.tab_id)]
-	if not color then
+	local icon = claude_tab_icon(tab)
+	if not color and not icon then
 		return nil
 	end
+
 	local title = tab.tab_title
 	if not title or title == "" then
-		title = tab.active_pane.title
+		-- 自動生成のタイトル。Claude Code は "repo · topic · session-id" のような長い OSC 0 を
+		-- 出し続けるため、ここで切り詰めないとタブ名が閉じるボタンに食い込む。
+		-- Ctrl+Shift+E で付けた名前(tab.tab_title)は意図した長さなので切り詰めない。
+		-- 差し引く 2 は下の Text で前後に付ける空白の分
+		local max_width = tab_max_width - 2 - (icon and claude_icon_width or 0)
+		title = wezterm.truncate_right(tab.active_pane.title, max_width)
 	end
-	local items = {
-		{ Background = { Color = color } },
-		{ Foreground = { Color = "#ffffff" } },
-	}
+	if icon then
+		title = icon .. " " .. title
+	end
+
+	local items = {}
+	if color then
+		table.insert(items, { Background = { Color = color } })
+		table.insert(items, { Foreground = { Color = "#ffffff" } })
+	end
 	if tab.is_active then
 		table.insert(items, { Attribute = { Intensity = "Bold" } })
 	end
