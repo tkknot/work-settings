@@ -564,9 +564,10 @@ wezterm.on("format-tab-title", function(tab)
 	local title = tab.tab_title
 	if not title or title == "" then
 		-- 自動生成のタイトル。Claude Code は "repo · topic · session-id" のような長い OSC 0 を
-		-- 出し続けるため、ここで切り詰めないとタブが横に伸びる。
-		-- Ctrl+Shift+E で付けた名前(tab.tab_title)は意図した長さなので切り詰めない
-		local max_width = tab_max_width - (icon and claude_icon_width or 0)
+		-- 出し続けるため、ここで切り詰めないとタブ名が閉じるボタンに食い込む。
+		-- Ctrl+Shift+E で付けた名前(tab.tab_title)は意図した長さなので切り詰めない。
+		-- 差し引く 2 は下の Text で前後に付ける空白の分
+		local max_width = tab_max_width - 2 - (icon and claude_icon_width or 0)
 		title = wezterm.truncate_right(tab.active_pane.title, max_width)
 	end
 	if icon then
