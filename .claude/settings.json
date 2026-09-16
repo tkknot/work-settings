@@ -6,16 +6,25 @@
   "language": "japanese",
   "advisorModel": "opus",
   "enableWorkflows": true,
+  "autoCompactEnabled": true,
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
       "source": {
         "source": "github",
         "repo": "anthropics/claude-code"
       }
+    },
+    "claude-plugins-official": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-official"
+      }
     }
   },
   "enabledPlugins": {
-    "pr-review-toolkit@claude-code-plugins": true
+    "pr-review-toolkit@claude-code-plugins": true,
+    "jdtls-lsp@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "hooks": {
     "SessionStart": [
@@ -24,7 +33,17 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle"
+            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle; fi"
+          },
+          {
+            "type": "command",
+            "command": "if [ -f \"$HOME/.claude/hooks/git-branch-report.sh\" ]; then bash \"$HOME/.claude/hooks/git-branch-report.sh\"; fi",
+            "timeout": 15,
+            "statusMessage": "git のブランチ状態を確認中"
+          },
+          {
+            "type": "command",
+            "command": "if [ -f \"$HOME/.claude/hooks/state-prune.sh\" ]; then bash \"$HOME/.claude/hooks/state-prune.sh\"; fi"
           }
         ]
       }
@@ -35,7 +54,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run"
+            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
+          },
+          {
+            "type": "command",
+            "command": "if [ -f \"$HOME/.claude/hooks/context-nudge.sh\" ]; then bash \"$HOME/.claude/hooks/context-nudge.sh\"; fi",
+            "timeout": 10
           }
         ]
       }
@@ -46,7 +70,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" wait"
+            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" wait; fi"
           }
         ]
       }
@@ -57,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run"
+            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
           }
         ]
       }
@@ -68,7 +92,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" done"
+            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" done; fi"
+          },
+          {
+            "type": "command",
+            "command": "if [ -f \"$HOME/.claude/hooks/usage-report.sh\" ]; then bash \"$HOME/.claude/hooks/usage-report.sh\"; fi",
+            "timeout": 10
           }
         ]
       }
@@ -79,7 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle"
+            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle; fi"
           }
         ]
       }
@@ -87,6 +116,6 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "input=$(cat); if command -v jq >/dev/null 2>&1; then model=$(printf '%s' \"$input\" | jq -r '.model.display_name'); effort=$(printf '%s' \"$input\" | jq -r '.effort.level // empty'); else model=$(printf '%s' \"$input\" | grep -o '\"display_name\":\"[^\"]*\"' | head -1 | cut -d'\"' -f4); effort=\"\"; fi; if [ -n \"$effort\" ]; then printf '%s | effort: %s\\n' \"$model\" \"$effort\"; else printf '%s\\n' \"$model\"; fi"
+    "command": "if [ -f \"$HOME/.claude/hooks/statusline.sh\" ]; then bash \"$HOME/.claude/hooks/statusline.sh\"; fi"
   }
 }

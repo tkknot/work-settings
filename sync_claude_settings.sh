@@ -121,6 +121,54 @@ if [ -f "$SCRIPT_DIR/.claude/settings.json" ]; then
     echo "Copied settings.json -> $DEST_DIR/settings.json"
 fi
 
+# --- LSP: 公式マーケットプレイスの登録と言語サーバープラグインの導入 ---
+# LSP は settings.json に直接書けず plugin 経由でしか設定できない。さらに enabledPlugins に
+# 書くだけでは外部ソースの plugin はインストールされない（"not installed" のまま）ため、
+# marketplace の追加と install をここで行う。MCP 登録と同じく「登録済みならスキップ」。
+#
+# 言語サーバーのバイナリは plugin に同梱されないので各自でインストールが必要。
+# 不在は警告のみにとどめ、sync 自体は失敗させない（sync_lazygit.sh の delta 警告と同じ扱い）。
+LSP_MARKETPLACE="claude-plugins-official"
+LSP_MARKETPLACE_REPO="anthropics/claude-plugins-official"
+# "<plugin名>:<必要バイナリ>"
+LSP_PLUGINS=("jdtls-lsp:jdtls" "typescript-lsp:typescript-language-server")
+
+setup_lsp_plugins() {
+    if ! command -v claude >/dev/null 2>&1; then
+        echo "Warning: 'claude' CLI not found; skipping LSP plugin setup."
+        return 0
+    fi
+
+    if claude plugin marketplace list 2>/dev/null | grep -q "$LSP_MARKETPLACE"; then
+        echo "Skipped (marketplace already added): $LSP_MARKETPLACE"
+    elif claude plugin marketplace add "$LSP_MARKETPLACE_REPO" >/dev/null 2>&1; then
+        echo "Added plugin marketplace: $LSP_MARKETPLACE"
+    else
+        echo "Warning: failed to add plugin marketplace: $LSP_MARKETPLACE_REPO"
+        return 0
+    fi
+
+    local entry name bin
+    for entry in "${LSP_PLUGINS[@]}"; do
+        name="${entry%%:*}"
+        bin="${entry##*:}"
+
+        if claude plugin list 2>/dev/null | grep -q "$name"; then
+            echo "Skipped (already installed): $name"
+        elif claude plugin install "$name@$LSP_MARKETPLACE" --scope user >/dev/null 2>&1; then
+            echo "Installed LSP plugin (user scope): $name"
+        else
+            echo "Warning: failed to install LSP plugin: $name@$LSP_MARKETPLACE"
+        fi
+
+        if ! command -v "$bin" >/dev/null 2>&1; then
+            echo "Warning: language server '$bin' not found in PATH; $name will not start until it is installed."
+        fi
+    done
+}
+
+setup_lsp_plugins
+
 # --- エージェントガイドライン: CLAUDE.md をコピー ---
 if [ -f "$SCRIPT_DIR/CLAUDE.md" ]; then
     cp "$SCRIPT_DIR/CLAUDE.md" "$DEST_DIR/CLAUDE.md"
