@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# statusLine 本体。model / effort / context 使用率 / cost / レート制限を1行で出す。
+# statusLine 本体。model / effort / context 使用率 / cost / レート制限 / session ID を1行で出す。
 #
 # 兼務: 受け取った payload のスナップショットを state ファイルへ書き出す。
 # context_window と rate_limits は **statusLine の payload にしか入っていない**（hook イベントは
@@ -80,5 +80,8 @@ fi
 # 来ていない環境では黙って表示から落とす。
 [ -n "$h5_i" ] && line="$line ${DIM}|${RESET} 5h ${h5_i}%"
 [ -n "$d7_i" ] && line="$line ${DIM}|${RESET} 週 ${d7_i}%"
+
+# session ID は `claude --resume <id>` へそのまま渡せるよう全文で出す。控えめに DIM 表示。
+[ -n "$sid" ] && line="$line ${DIM}| sid ${sid}${RESET}"
 
 printf '%b\n' "$line"
