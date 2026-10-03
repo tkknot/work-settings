@@ -1,7 +1,8 @@
 {
   "env": {
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods/work-settings"
   },
   "language": "japanese",
   "advisorModel": "opus",
@@ -40,10 +41,6 @@
             "command": "if [ -f \"$HOME/.claude/hooks/git-branch-report.sh\" ]; then bash \"$HOME/.claude/hooks/git-branch-report.sh\"; fi",
             "timeout": 15,
             "statusMessage": "git のブランチ状態を確認中"
-          },
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/state-prune.sh\" ]; then bash \"$HOME/.claude/hooks/state-prune.sh\"; fi"
           }
         ]
       }
@@ -55,11 +52,6 @@
           {
             "type": "command",
             "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
-          },
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/context-nudge.sh\" ]; then bash \"$HOME/.claude/hooks/context-nudge.sh\"; fi",
-            "timeout": 10
           }
         ]
       }
@@ -93,11 +85,6 @@
           {
             "type": "command",
             "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" done; fi"
-          },
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/usage-report.sh\" ]; then bash \"$HOME/.claude/hooks/usage-report.sh\"; fi",
-            "timeout": 10
           }
         ]
       }

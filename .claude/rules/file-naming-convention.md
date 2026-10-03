@@ -2,6 +2,9 @@
 
 `.claude/skills/` 配下にディレクトリを作成する際は、必ずカテゴリプレフィックスを付与する（`rules/` は対象外）。
 
+`.claude/mods/` も対象外。mod は `.claude/mods/work-settings/` の1プラグインに集約し、機能は
+`hooks/` 配下のファイルで分ける（`settings.json` の `CLAUDE_CODE_PLUGIN_DIRS` が1パスで済むため）。
+
 ```
 {prefix}--{name}/SKILL.md
 ```
