@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 # statusLine 本体。model / effort / context 使用率 / cost / レート制限 / session ID を1行で出す。
 #
-# 兼務: 受け取った payload のスナップショットを state ファイルへ書き出す。
-# context_window と rate_limits は **statusLine の payload にしか入っていない**（hook イベントは
-# 1つも受け取らない）ため、usage-report.sh（Stop）と context-nudge.sh（UserPromptSubmit）は
-# ここが書いた state を読む。この2段構えが唯一の経路。
-#
-# state の置き場所は ~/.claude/ ではなく XDG state ディレクトリ。CLAUDE.md の
-# 「状態ファイルと設定ファイルを混在させない」に従う。
+# 表示専用。以前はここが payload を XDG state へ書き出し、context 通知と使用量表示の hook が
+# それを読んでいたが、その役目は mod（.claude/mods/work-settings）が $.session.usage() で
+# 直接読む形に置き換わった。
 #
 # stdout はステータス行そのものなので、余計なものを書かないこと。
 
@@ -15,7 +11,7 @@ set -u
 
 input="$(cat)"
 
-# --- jq が無い環境ではモデル名だけ出して終わる（state も書かない） ---
+# --- jq が無い環境ではモデル名だけ出して終わる ---
 if ! command -v jq >/dev/null 2>&1; then
     printf '%s\n' "$(printf '%s' "$input" | grep -o '"display_name":"[^"]*"' | head -1 | cut -d'"' -f4)"
     exit 0
@@ -40,25 +36,6 @@ int_of() { printf '%.0f' "$1" 2>/dev/null || printf ''; }
 ctx_i="$([ -n "$ctx" ] && int_of "$ctx")"
 h5_i="$([ -n "$h5" ] && int_of "$h5")"
 d7_i="$([ -n "$d7" ] && int_of "$d7")"
-
-# --- state ファイルへスナップショットを書く（temp + mv でアトミックに） ---
-# statusLine は高頻度で走り、hook が同時に読むため、途中状態を読ませない。
-if [ -n "$sid" ]; then
-    state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/claude-code"
-    state_file="$state_dir/session-${sid}.env"
-    if mkdir -p "$state_dir" 2>/dev/null; then
-        tmp="$(mktemp "$state_file.XXXXXX" 2>/dev/null)" && {
-            {
-                printf 'CC_CTX_PCT=%s\n' "${ctx_i:-}"
-                printf 'CC_COST_USD=%s\n' "${cost:-}"
-                printf 'CC_RL_5H_PCT=%s\n' "${h5_i:-}"
-                printf 'CC_RL_7D_PCT=%s\n' "${d7_i:-}"
-                printf 'CC_UPDATED_AT=%s\n' "$(date +%s)"
-            } >"$tmp" 2>/dev/null && mv -f "$tmp" "$state_file" 2>/dev/null
-            rm -f "$tmp" 2>/dev/null
-        }
-    fi
-fi
 
 # --- ステータス行の組み立て ---
 YELLOW='\033[33m'; RED='\033[31m'; DIM='\033[2m'; RESET='\033[0m'
