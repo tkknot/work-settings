@@ -20,7 +20,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST_DIR="$HOME/.claude"
 
 # リポジトリが所有し、丸ごと同期して問題ないサブディレクトリ
-REPO_DIRS=("skills" "rules" "hooks" "commands")
+REPO_DIRS=("skills" "rules" "hooks" "commands" "mods")
 
 # --- 旧 symlink の解除 ---
 # 以前は ~/.claude/{rules,skills,playwright-config.json} を ~/.ai/ への symlink に
@@ -35,7 +35,7 @@ done
 
 mkdir -p "$DEST_DIR"
 
-echo "=== Syncing .claude/{skills,rules,hooks,commands} -> $DEST_DIR ==="
+echo "=== Syncing .claude/{skills,rules,hooks,commands,mods} -> $DEST_DIR ==="
 for dir in "${REPO_DIRS[@]}"; do
     if [ -d "$SCRIPT_DIR/.claude/$dir" ]; then
         mkdir -p "$DEST_DIR/$dir"
