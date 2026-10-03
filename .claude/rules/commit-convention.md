@@ -15,7 +15,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
   （例: `sync_*.sh を一括実行する sync_all.sh を追加`）。
 - **本文**: 箇条書き可。「なぜ」を含めると後から追いやすい。
 - **フッター**: AI が作成したコミットは `Co-Authored-By` を付ける。
-  ただし**PR 本文には AI 署名を付けない**（`git--create-pull-request` スキル参照）。
 
 | type | 用途 |
 |---|---|

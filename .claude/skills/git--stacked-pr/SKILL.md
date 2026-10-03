@@ -117,7 +117,7 @@ gh stack view --json               # .branches[].pr.number から PR 番号を�
 gh pr edit <番号> --title "…" --body-file ./_local.pr-schema.md
 ```
 
-- 本文は `git--create-pull-request` のテンプレート（日本語・「やったこと」に各コミットハッシュ・**AI 署名なし**）。
+- 本文は `git--create-pull-request` のテンプレート（日本語・「やったこと」に各コミットハッシュ）。
 - 本文ファイルは `_local.` prefix にする（`.gitignore` 済みでコミットされない）。
 - **スタックナビゲーションを本文に手書きしない。** GitHub が merge box にスタックマップ（全 PR と状態・
   各層へのリンク）を自動描画するため、本文に一覧を貼ると二重管理になる。レビュー順に関する補足が要る
@@ -223,7 +223,7 @@ gh pr create --base feat/schema --head feat/api --title "…" --body-file ./_loc
   `unstack` → `init` で組み直す。
 - デフォルトブランチ名をハードコードしない（`gh stack view --json` の `.trunk` から取る）。
 - `submit` / `push` / `sync` / `merge` は実行前に人間の承認を取る。
-- コミットメッセージは `.claude/rules/commit-convention.md`、PR 本文は日本語・AI 署名なしで
+- コミットメッセージは `.claude/rules/commit-convention.md`、PR 本文は日本語で
   `git--create-pull-request` の規約に従う。
 - フラグの正は `gh stack <command> --help`（`gh stack help <command>` は効かない）。
 
