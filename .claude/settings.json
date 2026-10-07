@@ -1,13 +1,18 @@
 {
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods/work-settings"
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "language": "japanese",
   "advisorModel": "opus",
   "enableWorkflows": true,
   "autoCompactEnabled": true,
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(~/.ssh/**)"
+    ]
+  },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
       "source": {
@@ -34,75 +39,12 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle; fi"
-          },
-          {
-            "type": "command",
             "command": "if [ -f \"$HOME/.claude/hooks/git-branch-report.sh\" ]; then bash \"$HOME/.claude/hooks/git-branch-report.sh\"; fi",
             "timeout": 15,
             "statusMessage": "git のブランチ状態を確認中"
           }
         ]
       }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" wait; fi"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" done; fi"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle; fi"
-          }
-        ]
-      }
     ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "if [ -f \"$HOME/.claude/hooks/statusline.sh\" ]; then bash \"$HOME/.claude/hooks/statusline.sh\"; fi"
   }
 }

@@ -2,9 +2,6 @@
 
 `.claude/skills/` 配下にディレクトリを作成する際は、必ずカテゴリプレフィックスを付与する（`rules/` は対象外）。
 
-`.claude/mods/` も対象外。mod は `.claude/mods/work-settings/` の1プラグインに集約し、機能は
-`hooks/` 配下のファイルで分ける（`settings.json` の `CLAUDE_CODE_PLUGIN_DIRS` が1パスで済むため）。
-
 ```
 {prefix}--{name}/SKILL.md
 ```
@@ -21,7 +18,7 @@
 | `research--` | 調査 | 仕様検索, コード調査 | `research--{name}/SKILL.md` |
 | `spec--` | 要件/仕様 | 要件定義, 仕様レビュー, Backlog連携 | `spec--requirements-workflow/SKILL.md` |
 | `debug--` | バグ調査 | 根本原因分析, 再現テスト, 修正提案 | `debug--bug-investigation-workflow/SKILL.md` |
-| `team--` | エージェント・チームセッション管理 | 協調編成モード | `team--session/SKILL.md` |
+| `team--` | エージェント・チームセッション管理 | 協調編成モード | `team--backlog-subtask-orchestrator/SKILL.md` |
 | `format--` | フォーマット変換 | テキスト整形, 記法変換, フォーマット統一 | `format--backlog-notation/SKILL.md` |
 | `security--` | セキュリティ | Dependabotアラート対応, 脆弱性スキャン | `security--dependabot-workflow/SKILL.md` |
 | `check--` | 事前チェック | 機能撤去・文言影響範囲チェック, PR前チェック | `check--removal-impact/SKILL.md` |
