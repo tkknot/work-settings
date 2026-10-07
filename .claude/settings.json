@@ -6,6 +6,13 @@
   "advisorModel": "opus",
   "enableWorkflows": true,
   "autoCompactEnabled": true,
+  "permissions": {
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(~/.ssh/**)"
+    ]
+  },
   "extraKnownMarketplaces": {
     "claude-code-plugins": {
       "source": {
