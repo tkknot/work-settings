@@ -57,17 +57,66 @@ if [ -L "$HOME/.claude.json" ]; then
     rm -f "$tmp"
 fi
 
-# --- Claude Desktop (macOS): 既存設定を壊さず mcpServers のみ merge する ---
-if [ -f "$SCRIPT_DIR/.claude/mcp.json" ] && [ "$(uname)" = "Darwin" ]; then
-    DESKTOP="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
-    mkdir -p "$(dirname "$DESKTOP")"
-    if [ -f "$DESKTOP" ] && command -v jq >/dev/null 2>&1; then
-        tmp="$(mktemp)"
-        jq -s '.[0] * {mcpServers: .[1].mcpServers}' "$DESKTOP" "$SCRIPT_DIR/.claude/mcp.json" >"$tmp" && mv "$tmp" "$DESKTOP"
-    else
-        cp "$SCRIPT_DIR/.claude/mcp.json" "$DESKTOP"
+# --- Claude Desktop: claude_desktop_config.json へ mcpServers を merge する ---
+# Desktop の Chat と Code タブの両方がこのファイルの MCP を読む。Code タブは同名サーバーが
+# ~/.claude.json にあってもこちらの定義を優先するため、ここが壊れると Code タブも壊れる。
+# - 既存エントリを優先する（実トークン入りの定義を repo のプレースホルダーで潰さない）。
+#   mcpServers 以外のキー（preferences などアプリが書く状態）はそのまま残す。
+# - env にプレースホルダー（空文字・"your-" 始まり）が残るサーバーは追加しない。既存の
+#   プレースホルダー入りエントリは消さずに警告だけ出す（Settings → Developer → Edit Config で実値に直す）。
+# - Playwright の --config 相対パスは起動 cwd 基準で解決できず接続に失敗するため、既存エントリも
+#   含めて絶対パスへ置換する（何度実行しても同じ結果になる）。
+# 引数: $1 = 対象ファイル, $2 = Desktop から見た playwright-config.json の絶対パス
+merge_desktop_mcp() {
+    local target="$1" playwright_cfg="$2" mcp_file="$SCRIPT_DIR/.claude/mcp.json"
+    if ! command -v jq >/dev/null 2>&1; then
+        echo "Warning: 'jq' not found; skipping Claude Desktop MCP merge: $target"
+        return 0
     fi
-    echo "Updated Claude Desktop MCP config: $DESKTOP"
+
+    local current='{}'
+    if [ -s "$target" ]; then
+        current="$(cat "$target")"
+    fi
+
+    local defs='
+        def placeholder: (.env // {}) | to_entries
+            | any(.value == "" or (.value | tostring | startswith("your-")));'
+
+    mkdir -p "$(dirname "$target")"
+    local tmp
+    tmp="$(mktemp)"
+    if ! jq --argjson cur "$current" --arg pw "$playwright_cfg" "$defs"'
+        def fix_playwright: if has("args") then
+            .args |= map(if . == ".claude/playwright-config.json" then $pw else . end) else . end;
+        (.mcpServers | with_entries(select(.value | placeholder | not))) as $add
+        | $cur | .mcpServers = (($add + (.mcpServers // {})) | map_values(fix_playwright))
+    ' "$mcp_file" >"$tmp"; then
+        # 既存ファイルが壊れた JSON などで merge できない場合は触らない
+        rm -f "$tmp"
+        echo "Warning: failed to merge MCP servers; left unchanged: $target"
+        return 0
+    fi
+    mv "$tmp" "$target"
+    echo "Merged mcpServers into: $target"
+
+    local name
+    while IFS= read -r name; do
+        echo "  Skipped (placeholder in mcp.json; add it in Desktop with real values): $name"
+    done < <(jq -r --argjson cur "$current" "$defs"'
+        .mcpServers | to_entries[] | .key as $k
+        | select((.value | placeholder) and (($cur.mcpServers // {}) | has($k) | not)) | $k
+    ' "$mcp_file")
+    while IFS= read -r name; do
+        echo "  Warning: placeholder values remain in: $name (replace them with real values)"
+    done < <(jq -r "$defs"'
+        .mcpServers | to_entries[] | select(.value | placeholder) | .key
+    ' "$target")
+}
+
+if [ -f "$SCRIPT_DIR/.claude/mcp.json" ] && [ "$(uname)" = "Darwin" ]; then
+    merge_desktop_mcp "$HOME/Library/Application Support/Claude/claude_desktop_config.json" \
+        "$DEST_DIR/playwright-config.json"
 fi
 
 # --- Playwright MCP 設定を実ファイルとして配置 ---
@@ -107,17 +156,11 @@ if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
         fi
     done
 
-    # Windows Claude Desktop: %APPDATA%\Claude\claude_desktop_config.json（状態を壊さず merge）
+    # Windows Claude Desktop: %APPDATA%\Claude\claude_desktop_config.json
+    # Desktop は Windows 側の npx で MCP を起動するため、Playwright の設定パスは Windows 形式で渡す。
     if [ -f "$SCRIPT_DIR/.claude/mcp.json" ]; then
-        WIN_CLAUDE_DESKTOP="$WINDOWS_HOME/AppData/Roaming/Claude/claude_desktop_config.json"
-        mkdir -p "$(dirname "$WIN_CLAUDE_DESKTOP")"
-        if [ -f "$WIN_CLAUDE_DESKTOP" ] && command -v jq >/dev/null 2>&1; then
-            tmp="$(mktemp)"
-            jq -s '.[0] * {mcpServers: .[1].mcpServers}' "$WIN_CLAUDE_DESKTOP" "$SCRIPT_DIR/.claude/mcp.json" >"$tmp" && mv "$tmp" "$WIN_CLAUDE_DESKTOP"
-        else
-            cp "$SCRIPT_DIR/.claude/mcp.json" "$WIN_CLAUDE_DESKTOP"
-        fi
-        echo "Updated Windows Claude Desktop MCP config: $WIN_CLAUDE_DESKTOP"
+        merge_desktop_mcp "$WINDOWS_HOME/AppData/Roaming/Claude/claude_desktop_config.json" \
+            "C:/Users/$WINDOWS_USER/.claude/playwright-config.json"
     fi
 
     if [ -f "$SCRIPT_DIR/.claude/playwright-config.json" ]; then
