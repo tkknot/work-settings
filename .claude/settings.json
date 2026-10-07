@@ -34,68 +34,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle; fi"
-          },
-          {
-            "type": "command",
             "command": "if [ -f \"$HOME/.claude/hooks/git-branch-report.sh\" ]; then bash \"$HOME/.claude/hooks/git-branch-report.sh\"; fi",
             "timeout": 15,
             "statusMessage": "git のブランチ状態を確認中"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
-          }
-        ]
-      }
-    ],
-    "Notification": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" wait; fi"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" run; fi"
-          }
-        ]
-      }
-    ],
-    "Stop": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" done; fi"
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "if [ -f \"$HOME/.claude/hooks/wezterm-tab-status.sh\" ]; then bash \"$HOME/.claude/hooks/wezterm-tab-status.sh\" idle; fi"
           }
         ]
       }

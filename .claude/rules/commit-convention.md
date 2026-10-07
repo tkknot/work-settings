@@ -25,4 +25,4 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 | `refactor` | 挙動を変えないリファクタリング |
 | `test` | テストの追加・修正 |
 
-scope の例: `wezterm` / `nvim` / `claude` / `sync` / `rules` / `skills` / `ci`
+scope の例: `claude` / `sync` / `rules` / `skills` / `ci`
