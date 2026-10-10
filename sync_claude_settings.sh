@@ -60,15 +60,19 @@ fi
 # --- Claude Desktop: claude_desktop_config.json へ mcpServers を merge する ---
 # Desktop の Chat と Code タブの両方がこのファイルの MCP を読む。Code タブは同名サーバーが
 # ~/.claude.json にあってもこちらの定義を優先するため、ここが壊れると Code タブも壊れる。
-# - 既存エントリを優先する（実トークン入りの定義を repo のプレースホルダーで潰さない）。
+# - 秘密を含まないサーバー（Playwright・context7 など）は repo の定義で上書きする。既存優先に
+#   すると、過去の sync で入った壊れた定義が残り続けて repo 側の修正が反映されないため。
 #   mcpServers 以外のキー（preferences などアプリが書く状態）はそのまま残す。
-# - env にプレースホルダー（空文字・"your-" 始まり）が残るサーバーは追加しない。既存の
-#   プレースホルダー入りエントリは消さずに警告だけ出す（Settings → Developer → Edit Config で実値に直す）。
+# - env にプレースホルダー（空文字・"your-" 始まり）が残るサーバーは追加も上書きもしない（実トークン
+#   入りの既存定義を潰さない）。既存のプレースホルダー入りエントリは消さずに警告だけ出す
+#   （Settings → Developer → Edit Config で実値に直す）。
 # - Playwright の --config 相対パスは起動 cwd 基準で解決できず接続に失敗するため、既存エントリも
 #   含めて絶対パスへ置換する（何度実行しても同じ結果になる）。
-# 引数: $1 = 対象ファイル, $2 = Desktop から見た playwright-config.json の絶対パス
+# - Windows の npx は npx.cmd で、Desktop は cmd /c を介さないと起動できず接続に失敗する
+#   （Context7 公式の Windows 設定例と同じ）。$3 = windows のとき npx を cmd /c npx に包む（冪等）。
+# 引数: $1 = 対象ファイル, $2 = Desktop から見た playwright-config.json の絶対パス, $3 = OS（省略可。windows）
 merge_desktop_mcp() {
-    local target="$1" playwright_cfg="$2" mcp_file="$SCRIPT_DIR/.claude/mcp.json"
+    local target="$1" playwright_cfg="$2" os="${3:-}" mcp_file="$SCRIPT_DIR/.claude/mcp.json"
     if ! command -v jq >/dev/null 2>&1; then
         echo "Warning: 'jq' not found; skipping Claude Desktop MCP merge: $target"
         return 0
@@ -86,11 +90,13 @@ merge_desktop_mcp() {
     mkdir -p "$(dirname "$target")"
     local tmp
     tmp="$(mktemp)"
-    if ! jq --argjson cur "$current" --arg pw "$playwright_cfg" "$defs"'
+    if ! jq --argjson cur "$current" --arg pw "$playwright_cfg" --arg os "$os" "$defs"'
         def fix_playwright: if has("args") then
             .args |= map(if . == ".claude/playwright-config.json" then $pw else . end) else . end;
+        def wrap_windows: if $os == "windows" and .command == "npx"
+            then .command = "cmd" | .args = ["/c", "npx"] + (.args // []) else . end;
         (.mcpServers | with_entries(select(.value | placeholder | not))) as $add
-        | $cur | .mcpServers = (($add + (.mcpServers // {})) | map_values(fix_playwright))
+        | $cur | .mcpServers = (((.mcpServers // {}) + $add) | map_values(fix_playwright | wrap_windows))
     ' "$mcp_file" >"$tmp"; then
         # 既存ファイルが壊れた JSON などで merge できない場合は触らない
         rm -f "$tmp"
@@ -157,10 +163,11 @@ if [ -f /proc/version ] && grep -qi Microsoft /proc/version; then
     done
 
     # Windows Claude Desktop: %APPDATA%\Claude\claude_desktop_config.json
-    # Desktop は Windows 側の npx で MCP を起動するため、Playwright の設定パスは Windows 形式で渡す。
+    # Desktop は Windows 側の npx で MCP を起動するため、Playwright の設定パスは Windows 形式で渡し、
+    # npx は cmd /c で包む。
     if [ -f "$SCRIPT_DIR/.claude/mcp.json" ]; then
         merge_desktop_mcp "$WINDOWS_HOME/AppData/Roaming/Claude/claude_desktop_config.json" \
-            "C:/Users/$WINDOWS_USER/.claude/playwright-config.json"
+            "C:/Users/$WINDOWS_USER/.claude/playwright-config.json" windows
     fi
 
     if [ -f "$SCRIPT_DIR/.claude/playwright-config.json" ]; then
