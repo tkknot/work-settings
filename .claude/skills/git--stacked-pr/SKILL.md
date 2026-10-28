@@ -114,11 +114,11 @@ gh stack submit --auto --open      # ← 承認ゲート: 全ブランチを pus
 
 ```bash
 gh stack view --json               # .branches[].pr.number から PR 番号を取得
-gh pr edit <番号> --title "…" --body-file ./_local.pr-schema.md
+gh pr edit <番号> --title "…" --body-file "${TMPDIR:-/tmp}/pr-schema.md"
 ```
 
 - 本文は `git--create-pull-request` のテンプレート（日本語・「やったこと」に各コミットハッシュ）。
-- 本文ファイルは `_local.` prefix にする（`.gitignore` 済みでコミットされない）。
+- 本文ファイルはリポジトリ外（`${TMPDIR:-/tmp}` など）に置き、誤ってコミットしないようにする。
 - **スタックナビゲーションを本文に手書きしない。** GitHub が merge box にスタックマップ（全 PR と状態・
   各層へのリンク）を自動描画するため、本文に一覧を貼ると二重管理になる。レビュー順に関する補足が要る
   場合だけ「その他」セクションに1行書く。
@@ -209,7 +209,7 @@ stderr をパースせず、**exit code で分岐する**。
 git switch -c feat/api feat/schema             # 分岐元は必ず親ブランチ
 git push -u origin feat/schema                 # 親 → 子の順に push（順序が重要）
 git push -u origin feat/api
-gh pr create --base feat/schema --head feat/api --title "…" --body-file ./_local.pr-api.md
+gh pr create --base feat/schema --head feat/api --title "…" --body-file "${TMPDIR:-/tmp}/pr-api.md"
 ```
 
 - 親を直したら子を追従させる: `git rebase --onto feat/schema <親の旧tip> feat/api` → 親から順に
