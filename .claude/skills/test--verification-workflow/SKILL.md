@@ -148,3 +148,4 @@ Step 1 で拾った過去不具合由来のケースは、`技法` 列に `過�
 |--------|------|
 | `test--test-case-design` | テストシナリオとケースの設計支援 |
 | `spec--backlog-integration` | 過去のBacklog課題の検索・取得（Step 1） |
+| `test--manual-check-automation` | 残った手動確認を実装に触れず自動テスト化し、打鍵を減らす（Step 4 の発展） |
