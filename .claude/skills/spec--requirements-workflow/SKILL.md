@@ -98,7 +98,8 @@ Backlog連携を軸とした要件定義の進め方ガイドです。上位者�
 
 ### Step 5: 最終確認 (Human Check)
 
-**人間がGoサインを出す**
+**人間がGoサインを出す**: `AskUserQuestion` で「Go（Backlog へ登録する）」「修正してから再確認」「中止」を質問する。
+Go が出るまで Backlog への登録には進まない。
 
 **Backlogへの登録**:
 ```
